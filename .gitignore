@@ -22,6 +22,7 @@ build.ninja
 *.elf
 *.dol
 *.map
+*.o
 
 # cache
 .cache/

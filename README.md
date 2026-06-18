@@ -1,13 +1,23 @@
 Challenge Me: Word Puzzles
 ==========================
 
-A decompilation of *Challenge Me: World Puzzles*.
+A decompilation ofthe Slam Technology Wii Runtime from *Challenge Me: World Puzzles*.
 
 This repository does not contain any of the original objects. An existing copy of the game [`[SC5PGN]`](https://wiki.dolphin-emu.org/index.php?title=SC5PGN) *Challenge Me: Word Puzzles* is required. (See [Building](#building) below.)
 
 Supported versions:
-- DEBUG
-- RELEASE
+- `20100817_DBG` - 2010 August 17th debug build
+  - Revolution SDK debug build: 2009 December 11th
+  - Revolution Face Library debug build: 2008 March 06th
+  - HOME Button Library debug build: 2010 February 24th
+- `20100817_REL` - 2010 August 17th release build
+  - Revolution SDK release build: 2009 December 11th
+  - Revolution Face Library release build: 2008 March 06th
+  - HOME Button Library release build: 2010 February 24th
+- `20090820_REL` - 2009 August 20th release build
+  - Revolution SDK release build: 2009 February 24th
+  - Revolution Face Library release build: 2008 March 06th
+  - HOME Button Library release build: 2008 September 24th
 
 Dependencies
 ============
@@ -60,7 +70,7 @@ Building
   python configure.py
   ```
 
-  To use a version other than `DEBUG`, specify it with `--version`.
+  `20100817_DBG` is the default version. To use a different version, specify it with `--version`.
 
 - Build:
 
