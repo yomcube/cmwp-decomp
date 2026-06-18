@@ -1,0 +1,13 @@
+[
+    
+    {
+        "obj_paths": "config/DEBUG/paths_slamWii.txt",
+        "disc_path": "orig",
+        "arch_path": "build/libs/Debug/slamWiiD.a"
+    },
+    {
+        "obj_paths": "config/DEBUG/paths_RFL.txt",
+        "disc_path": "orig",
+        "arch_path": "build/libs/Debug/RVLFaceLibD.a"
+    }
+]
