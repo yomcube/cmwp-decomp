@@ -205,7 +205,6 @@ cflags_base = [
     "-i include",
     "-i include/context_sdk",
     "-i include/context_std",
-    "-i include/RFL",
     "-enc SJIS",
     '-pragma "cats off"',
     '-pragma "warn_notinlined off"'
@@ -220,15 +219,14 @@ elif args.warn == "error":
     cflags_base.append("-W error")
 
 cflags_RVLSDK = {
+    "base": cflags_base,
     "DEBUG": [
-        *cflags_base,
         "-opt off",
         "-inline off",
         "-g",
         "-DDEBUG",
     ],
     "RELEASE": [
-        *cflags_base,
         "-O4,p",
         "-inline auto",
         "-ipa file",
@@ -236,21 +234,26 @@ cflags_RVLSDK = {
     ]
 }
 cflags_RFL = {
-    "DEBUG": [
+    "base": [
         *cflags_base,
+        "-i include/RVLFaceLib"
+    ],
+    "DEBUG": [
         "-opt off",
         "-inline off",
         "-g",
         "-DDEBUG",
     ],
     "RELEASE": [
-        *cflags_base,
         "-O4,p",
         "-inline auto",
         "-ipa file",
         "-DNDEBUG",
     ]
 }
+
+def CFlags(cflags):
+    return [ *cflags["base"], *cflags[config.version] ]
 
 config.linker_version = "Wii/1.0"
 
@@ -271,8 +274,8 @@ config.warn_missing_source = True
 config.libs = [
     {
         "lib": "RVL_SDK",
-        "mw_version": "GC/3.0a5.2",
-        "cflags": cflags_RVLSDK[config.version],
+        "mw_version": "Wii/1.0",
+        "cflags": CFlags(cflags_RVLSDK),
         "progress_category": "sdk",
         "objects": [
             Object(NonMatching, "RVL_SDK/ARC/arc.c"),
@@ -287,24 +290,24 @@ config.libs = [
     {
         "lib": "RVLFaceLib",
         "mw_version": "GC/3.0a5.2",
-        "cflags": cflags_RFL[config.version],
+        "cflags": CFlags(cflags_RFL),
         "progress_category": "rfl",
         "objects": [
-            Object(Matching,   "RFL/RFL_System.c"),
-            Object(Matching,   "RFL/RFL_NANDLoader.c"),
-            Object(Matching,   "RFL/RFL_NANDAccess.c"),
-            Object(R_Matching, "RFL/RFL_Model.c"),
-            Object(R_Matching, "RFL/RFL_MakeTex.c"),
-            Object(Matching,   "RFL/RFL_Icon.c"),
-            Object(Matching,   "RFL/RFL_HiddenDatabase.c"),
-            Object(Matching,   "RFL/RFL_Database.c"),
-            Object(Matching,   "RFL/RFL_Controller.c"),
-            Object(Matching,   "RFL/RFL_MiddleDatabase.c"),
-            Object(Matching,   "RFL/RFL_MakeRandomFace.c"),
-            Object(Matching,   "RFL/RFL_DefaultDatabase.c"),
-            Object(Matching,   "RFL/RFL_DataUtility.c"),
-            Object(Matching,   "RFL/RFL_NWC24.c"),
-            Object(Matching,   "RFL/RFL_Format.c"),
+            Object(Matching,   "RVLFaceLib/RFL_System.c"),
+            Object(Matching,   "RVLFaceLib/RFL_NANDLoader.c"),
+            Object(Matching,   "RVLFaceLib/RFL_NANDAccess.c"),
+            Object(R_Matching, "RVLFaceLib/RFL_Model.c"),
+            Object(R_Matching, "RVLFaceLib/RFL_MakeTex.c"),
+            Object(Matching,   "RVLFaceLib/RFL_Icon.c"),
+            Object(Matching,   "RVLFaceLib/RFL_HiddenDatabase.c"),
+            Object(Matching,   "RVLFaceLib/RFL_Database.c"),
+            Object(Matching,   "RVLFaceLib/RFL_Controller.c"),
+            Object(Matching,   "RVLFaceLib/RFL_MiddleDatabase.c"),
+            Object(Matching,   "RVLFaceLib/RFL_MakeRandomFace.c"),
+            Object(Matching,   "RVLFaceLib/RFL_DefaultDatabase.c"),
+            Object(Matching,   "RVLFaceLib/RFL_DataUtility.c"),
+            Object(Matching,   "RVLFaceLib/RFL_NWC24.c"),
+            Object(Matching,   "RVLFaceLib/RFL_Format.c"),
         ],
     },
 ]
