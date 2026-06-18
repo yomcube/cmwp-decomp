@@ -1,13 +1,22 @@
 [
-    
     {
-        "obj_paths": "config/DEBUG/paths_slamWii.txt",
         "disc_path": "orig",
-        "arch_path": "build/libs/Debug/slamWiiD.a"
+        "arch_path": "build/libs/Debug/slamWiiD.a",
+        "obj_paths": "config/DEBUG/paths_slamWii.txt"
     },
     {
-        "obj_paths": "config/DEBUG/paths_RFL.txt",
         "disc_path": "orig",
-        "arch_path": "build/libs/Debug/RVLFaceLibD.a"
+        "arch_path": "build/libs/Debug/RVLFaceLibD.a",
+        "obj_paths": "config/DEBUG/paths_RFL.txt"
+    },
+    {
+        "disc_path": "orig",
+        "arch_path": "build/libs/Debug/hio2D.a",
+        "obj_paths": [ "1 RVL_SDK/HIO2/hio2.c" ]
+    },
+    {
+        "disc_path": "orig",
+        "arch_path": "build/libs/Debug/wbcD.a",
+        "obj_paths": [ "1 RVL_SDK/WBC/wbc.c" ]
     }
 ]

@@ -271,12 +271,17 @@ config.warn_missing_source = True
 config.libs = [
     {
         "lib": "RVL_SDK",
-        "mw_version": "Wii/1.0",
+        "mw_version": "GC/3.0a5.2",
         "cflags": cflags_RVLSDK[config.version],
         "progress_category": "sdk",
         "objects": [
             Object(NonMatching, "RVL_SDK/ARC/arc.c"),
+
+            Object(NonMatching, "RVL_SDK/HIO2/hio2.c"),
+
             Object(NonMatching, "RVL_SDK/RSO/RSOLink.c"),
+
+            Object(NonMatching, "RVL_SDK/WBC/wbc.c"),
         ],
     },
     {

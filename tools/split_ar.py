@@ -41,9 +41,9 @@ def write_file(output_path: Path, data) -> None:
 # Module configuration
 class ArchiveConfig:
     name: str
-    obj_paths: str
     disc_path: str
     arch_path: str
+    obj_paths: str | list[str]
 
 class DTKConfigMain:
     def __init__(self, name, version):
@@ -83,8 +83,11 @@ def main() -> None:
         # Read settings from configuration
         config_archive_name = archive_config.get("name")
         config_disc_path = Path(archive_config.get("disc_path"))
-        config_paths_file = Path(archive_config.get("obj_paths"))
         config_input_file = Path(archive_config.get("arch_path"))
+        
+        config_paths = archive_config.get("obj_paths")
+        if type(config_paths) == str:
+            config_paths = open(config_paths)
 
 
         # Use archive file name if no name is specified.
@@ -143,52 +146,53 @@ def main() -> None:
         with open(config_input_file, 'rb') as archive_file_handle:
             ar_input_file = Archive(archive_file_handle)
             # Open paths file
-            with open(config_paths_file, 'r') as paths_file_handle:
-                # Now let's go through the entries
-                reader = csv.reader(paths_file_handle, delimiter='\t')
-                for file_entry in reader:
+            # Now let's go through the entries
+            reader = csv.reader(config_paths, delimiter=' ')
+            for file_entry in reader:
 
-                    # Get path entry info
+                # Get path entry info
 
-                    ar_file_full_name = file_entry[1]
-                    ar_file_name = os.path.basename(ar_file_full_name)
+                ar_file_full_name = file_entry[1]
+                ar_file_name = os.path.basename(ar_file_full_name)
 
-                    ar_file_obj = os.path.splitext(ar_file_full_name)[0] + ".o"
-                    ar_file_obj_name = os.path.basename(ar_file_obj)
+                ar_file_obj = os.path.splitext(ar_file_full_name)[0] + ".o"
+                ar_file_obj_name = os.path.basename(ar_file_obj)
 
-                    ar_file_asm = os.path.splitext(ar_file_full_name)[0] + ".s"
+                ar_file_asm = os.path.splitext(ar_file_full_name)[0] + ".s"
 
-                    ar_file_output_dtkpath = Path(os.path.join(get_path("obj"), ar_file_obj))
-                    ar_file_output_fullpath = Path(os.path.join(obj_path, ar_file_obj))
-                    ar_file_disasm_fullpath = Path(os.path.join(asm_path, ar_file_asm))
+                ar_file_output_dtkpath = Path(os.path.join(get_path("obj"), ar_file_obj))
+                ar_file_output_fullpath = Path(os.path.join(obj_path, ar_file_obj))
+                ar_file_disasm_fullpath = Path(os.path.join(asm_path, ar_file_asm))
 
-                    ar_file_duplicate = int(file_entry[0])
+                ar_file_duplicate = int(file_entry[0])
 
-                    # For objects that may have the same name and location
-                    duplicate = 1
-                    for ar_entry in ar_input_file:
-                        # If the name and duplicate matches, we got one!
-                        if ar_entry.name == ar_file_obj_name and duplicate == ar_file_duplicate:
-                            # Extract object
-                            ar_file_output_fullpath.parent.mkdir(parents=True, exist_ok=True)
-                            write_file(ar_file_output_fullpath, ar_input_file.open(ar_entry, 'rb').read())
-                            
-                            # Disassemble object
-                            ar_file_disasm_fullpath.parent.mkdir(parents=True, exist_ok=True)
-                            subprocess.check_output([args.dtk, 'elf', 'disasm', ar_file_output_fullpath, ar_file_disasm_fullpath])
+                # For objects that may have the same name and location
+                duplicate = 1
+                for ar_entry in ar_input_file:
+                    # If the name and duplicate matches, we got one!
+                    if ar_entry.name == ar_file_obj_name and duplicate == ar_file_duplicate:
+                        # Extract object
+                        ar_file_output_fullpath.parent.mkdir(parents=True, exist_ok=True)
+                        write_file(ar_file_output_fullpath, ar_input_file.open(ar_entry, 'rb').read())
+                        
+                        # Disassemble object
+                        ar_file_disasm_fullpath.parent.mkdir(parents=True, exist_ok=True)
+                        subprocess.check_output([args.dtk, 'elf', 'disasm', ar_file_output_fullpath, ar_file_disasm_fullpath])
 
-                            # Add to DTK config
-                            dtk_config.add_unit(str(ar_file_output_dtkpath), str(ar_file_full_name))
+                        # Add to DTK config
+                        dtk_config.add_unit(str(ar_file_output_dtkpath), str(ar_file_full_name))
 
-                            # Next object!
-                            break
+                        # Next object!
+                        break
 
-                        # If the name matches but not the duplicate, then we goto the next object, finding the next duplica
-                        if ar_entry.name == ar_file_obj_name and not duplicate == ar_file_duplicate:
-                            duplicate += 1
+                    # If the name matches but not the duplicate, then we goto the next object, finding the next duplica
+                    if ar_entry.name == ar_file_obj_name and not duplicate == ar_file_duplicate:
+                        duplicate += 1
 
-                        continue
+                    continue
 
+        if type(config_paths) == io.TextIOWrapper:
+            config_paths.close()
 
         # print("Writing DTK config...")
 
