@@ -214,6 +214,17 @@ cflags_base_all = [
     '-pragma "warn_notinlined off"'
 ]
 
+if config.version.startswith("20100817"):
+    cflags_base_all.append("-DSDK_20091112")
+    cflags_base_all.append("-DSDK_VERSION=20091112")
+    cflags_base_all.append("-DHBM_20100224")
+    cflags_base_all.append("-DHBM_VERSION=20100224")
+elif config.version.startswith("20090820"):
+    cflags_base_all.append("-DSDK_20090224")
+    cflags_base_all.append("-DSDK_VERSION=20090824")
+    cflags_base_all.append("-DHBM_20080924")
+    cflags_base_all.append("-DHBM_VERSION=20080924")
+
 # Warning flags
 if args.warn == "all":
     cflags_base_all.append("-W all")
@@ -292,6 +303,13 @@ cflags_msl = [
     "-use_lmw_stmw on"
 ]
 
+# HomeButton flags
+cflags_hbm = [
+    *cflags_base,
+    "-sdata 0",
+    "-sdata2 0",
+]
+
 config.linker_version = "Wii/1.0"
 
 if config.version.startswith("2010"):
@@ -330,6 +348,17 @@ def RVLSDKLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
         "lib": lib_name,
         "mw_version": sdk_compiler,
         "cflags": cflags_base,
+        "progress_category": "main_libs",
+        "objects": objects,
+    }
+
+
+
+def HBMLib(objects: List[Object]) -> Dict[str, Any]:
+    return {
+        "lib": "homebuttonLib",
+        "mw_version": sdk_compiler,
+        "cflags": cflags_hbm,
         "progress_category": "main_libs",
         "objects": objects,
     }
@@ -699,7 +728,7 @@ config.libs = [
         Object(NonMatching, "TRK_Hollywood_Revolution/target_options.c")
     ]),
 
-    RVLSDKLib("homebuttonLib", [
+    HBMLib([
         Object(NonMatching, "homebuttonLib/HBMFrameController.cpp"),
         Object(NonMatching, "homebuttonLib/HBMAnmController.cpp"),
         Object(NonMatching, "homebuttonLib/HBMGUIManager.cpp"),

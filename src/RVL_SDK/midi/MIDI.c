@@ -1,11 +1,11 @@
 #include <revolution/verdefs.h>
-#if defined(SLAM_20100817)
+#if defined(SDK_20091112)
 #ifdef DEBUG
 SDKDefineVersion(MIDI, "Dec 11 2009", "15:53:52");
 #else
 SDKDefineVersion(MIDI, "Dec 11 2009", "15:58:29");
 #endif
-#elif defined(SLAM_20090820)
+#elif defined(SDK_20090224)
 SDKDefineVersion(MIDI, "Jul 30 2008", "19:23:09");
 #endif
 
