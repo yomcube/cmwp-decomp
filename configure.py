@@ -813,8 +813,8 @@ config.libs = [
     ]),
 
     RVLSDKLib("base", [
-        Object(NonMatching, "RVL_SDK/base/PPCArch.c"),
-        Object(NonMatching, "RVL_SDK/base/PPCPm.c")
+        Object(Matching,    "RVL_SDK/base/PPCArch.c"),
+        Object(Matching,    "RVL_SDK/base/PPCPm.c")
     ]),
 
     RVLSDKLib("bte", [
@@ -929,7 +929,7 @@ config.libs = [
     ]),
 
     RVLSDKLib("db", [
-        Object(NonMatching, "RVL_SDK/db/db.c")
+        Object(Matching,    "RVL_SDK/db/db.c")
     ]),
 
     RVLSDKLib("dsp", [

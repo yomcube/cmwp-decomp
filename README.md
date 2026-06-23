@@ -88,3 +88,7 @@ Download the latest release from [encounter/objdiff](https://github.com/encounte
 Select an object from the left sidebar to begin diffing. Changes to the project will rebuild automatically: changes to source files, headers, `configure.py`, `splits.txt` or `symbols.txt`.
 
 ![](assets/objdiff.png)
+
+Thanks to
+=========
+[doldecomp/dolsdk2004](github.com/doldecomp/dolsdk2004) - Decompilation of Dolphin SDK 2004 (which is what RVL_SDK is based on)
