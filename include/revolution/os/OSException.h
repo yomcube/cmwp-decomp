@@ -34,6 +34,7 @@ typedef void (*__OSExceptionHandler)(__OSException exception, OSContext* context
 __OSExceptionHandler __OSSetExceptionHandler(__OSException exception, __OSExceptionHandler handler);
 __OSExceptionHandler __OSGetExceptionHandler(__OSException exception);
 
+// clang-format off
 #define OS_EXCEPTION_SAVE_GPRS(context)                                                                                                              \
     stw r0, OS_CONTEXT_R0(context);                                                                                                                  \
     stw r1, OS_CONTEXT_R1(context);                                                                                                                  \
@@ -53,6 +54,7 @@ __OSExceptionHandler __OSGetExceptionHandler(__OSException exception);
     stw r0, OS_CONTEXT_GQR6(context);                                                                                                                \
     mfspr r0, GQR7;                                                                                                                                  \
     stw r0, OS_CONTEXT_GQR7(context);
+// clang-format on
 
 #ifdef __cplusplus
 }
