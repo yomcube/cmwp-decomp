@@ -751,11 +751,11 @@ config.libs = [
     ]),
 
     RVLSDKLib("amcstubs", [
-        Object(NonMatching, "RVL_SDK/amcstubs/AmcExi2Stubs.c")
+        Object(Matching,    "RVL_SDK/amcstubs/AmcExi2Stubs.c")
     ]),
 
     RVLSDKLib("odenotstub", [
-        Object(NonMatching, "RVL_SDK/odenotstub/odenotstub.c")
+        Object(Matching,    "RVL_SDK/odenotstub/odenotstub.c")
     ]),
 
     RVLSDKLib("ai", [
