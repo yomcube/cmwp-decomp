@@ -4,7 +4,6 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-
 #include <internal/file_struct.h>
 
 #ifdef __cplusplus
@@ -29,7 +28,11 @@ int snprintf(char* s, size_t n, const char* format, ...);
 int vsprintf(char* s, const char* format, va_list arg);
 int vsnprintf(char* s, size_t n, const char* format, va_list arg);
 
-#define stdout (&__files[1])
+void fputs(const char* str, FILE* fptr);
+
+#define stdin &(__files[0])
+#define stdout &(__files[1])
+#define stderr &(__files[2])
 
 #define _IONBF 0
 #define _IOLBF 1

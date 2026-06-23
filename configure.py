@@ -194,7 +194,6 @@ config.reconfig_deps = []
 config.scratch_preset_id = None
 
 # Base flags, common to most GC/Wii games.
-# Generally leave untouched, with overrides added below.
 cflags_base_all = [
     "-nodefaults",
     "-proc gekko",
@@ -206,13 +205,24 @@ cflags_base_all = [
     "-i include",
     "-i include/stdlib",
     "-i include/RVLFaceLib",
+    "-i include/Runtime.PPCEABI.H",
     "-enc SJIS",
     "-DTARGET_RVL",
     "-DSLAM_" + config.version[:-4],
+    "-DSLAM_VERSION=" + config.version[:-4],
     '-pragma "cats off"',
     '-pragma "warn_notinlined off"'
 ]
 
+# Warning flags
+if args.warn == "all":
+    cflags_base_all.append("-W all")
+elif args.warn == "off":
+    cflags_base_all.append("-W off")
+elif args.warn == "error":
+    cflags_base_all.append("-W error")
+
+# Build flags
 cflags_base_debug = [
     *cflags_base_all,
     "-opt off",
@@ -234,39 +244,51 @@ if config.version.endswith("DBG"):
 else:
     cflags_base = cflags_base_release
 
-# Warning flags
-if args.warn == "all":
-    cflags_base.append("-W all")
-elif args.warn == "off":
-    cflags_base.append("-W off")
-elif args.warn == "error":
-    cflags_base.append("-W error")
-
 cflags_base_exceptions = [
     *cflags_base,
     "-cpp_exceptions on",
 ]
 
+# Slam flags
+if config.version.startswith("2010"):
+    cflags_slam = [
+        *cflags_base_debug,
+        "-cpp_exceptions on"
+    ]
+else:
+    cflags_slam = [
+        *cflags_base,
+        "-func_align 4",
+        "-cpp_exceptions on"
+    ]
+
+if config.version.endswith("REL"):
+    cflags_slam.append("-use_lmw_stmw on")
+
+# Metroworks libraries flags
 cflags_runtime = [
-    *cflags_base_release,
+    *cflags_base_all,
+    "-O4,p",
     "-use_lmw_stmw on",
     "-str reuse,pool,readonly",
     "-fp_contract off",
-    "-gccinc",
-    "-D_IEEE_LIBM",
+    "-func_align 4",
+    "-gccinc"
 ]
 
 cflags_trk = [
     *cflags_runtime,
     "-inline deferred",
-    "-sdata 0",
+    "-sdata 0"
 ]
 
 cflags_msl = [
-    *cflags_base_release,
-    "-ipa file",
+    *cflags_base_all,
+    "-O4,p",
+    "-func_align 4",
     "-str reuse,pool,readonly",
     "-fp_contract off",
+    "-D_IEEE_LIBM",
     "-use_lmw_stmw on"
 ]
 
@@ -297,7 +319,7 @@ def SLAM(objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": "slamWii",
         "mw_version": config.linker_version,
-        "cflags": cflags_base,
+        "cflags": cflags_slam,
         "progress_category": "slam",
         "objects": objects,
     }
@@ -347,7 +369,7 @@ def MSL_C(objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": "MSL_C.PPCEABI.H",
         "mw_version": config.linker_version,
-        "cflags": cflags_runtime,
+        "cflags": cflags_msl,
         "progress_category": "main_libs",
         "objects": objects,
     }
@@ -357,7 +379,7 @@ def MSL_CPP(objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": "MSL_C++.PPCEABI.H",
         "mw_version": config.linker_version,
-        "cflags": cflags_runtime,
+        "cflags": cflags_msl,
         "progress_category": "main_libs",
         "objects": objects,
     }
@@ -451,7 +473,7 @@ config.libs = [
         Object(NonMatching, "SLAM_TECHNOLOGY/Slam_Core/CachedVertexManager.cpp"),
         Object(NonMatching, "SLAM_TECHNOLOGY/Slam_Core/crc.cpp"),
         Object(NonMatching, "SLAM_TECHNOLOGY/Slam_Core/DllServices.cpp"),
-        Object(NonMatching, "SLAM_TECHNOLOGY/Slam_Core/lz.c"),
+        Object(Matching,    "SLAM_TECHNOLOGY/Slam_Core/lz.c"),
         Object(NonMatching, "SLAM_TECHNOLOGY/Slam_Core/MenuAnimation.cpp"),
         Object(NonMatching, "SLAM_TECHNOLOGY/Slam_Core/MenuAnimationControl.cpp"),
         Object(NonMatching, "SLAM_TECHNOLOGY/Slam_Core/MenuBackdrop.cpp"),
@@ -497,21 +519,21 @@ config.libs = [
     ]),
 
     Runtime([
-        Object(NonMatching, "Runtime.PPCEABI.H/__mem.c"),
-        Object(NonMatching, "Runtime.PPCEABI.H/__va_arg.c"),
-        Object(NonMatching, "Runtime.PPCEABI.H/global_destructor_chain.c"),
+        Object(Matching,    "Runtime.PPCEABI.H/__mem.c"),
+        Object(Matching,    "Runtime.PPCEABI.H/__va_arg.c"),
+        Object(Matching,    "Runtime.PPCEABI.H/global_destructor_chain.c"),
         Object(NonMatching, "Runtime.PPCEABI.H/CPlusLibPPC.cp"),
         Object(NonMatching, "Runtime.PPCEABI.H/New.cp"),
         Object(NonMatching, "Runtime.PPCEABI.H/NewMore.cp"),
         Object(NonMatching, "Runtime.PPCEABI.H/NMWException.cp"),
-        Object(NonMatching, "Runtime.PPCEABI.H/ptmf.c"),
+        Object(Matching,    "Runtime.PPCEABI.H/ptmf.c"),
         Object(NonMatching, "Runtime.PPCEABI.H/MWRTTI.cp"),
-        Object(NonMatching, "Runtime.PPCEABI.H/runtime.c"),
-        Object(NonMatching, "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
-        Object(NonMatching, "Runtime.PPCEABI.H/Gecko_setjmp.c"),
+        Object(Matching,    "Runtime.PPCEABI.H/runtime.c"),
+        Object(Matching,    "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
+        Object(Matching,    "Runtime.PPCEABI.H/Gecko_setjmp.c"),
         Object(NonMatching, "Runtime.PPCEABI.H/Gecko_ExceptionPPC.cp"),
         Object(NonMatching, "Runtime.PPCEABI.H/GCN_mem_alloc.c"),
-        Object(NonMatching, "Runtime.PPCEABI.H/ppcsfpe.c")
+        Object(Matching,    "Runtime.PPCEABI.H/ppcsfpe.c", extra_cflags=["-sdata 0"])
     ]),
     
     MSL_C([
@@ -562,74 +584,75 @@ config.libs = [
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common/Src/math_double.c"),
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common/Src/math_float.c"),
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common/Src/math_longdouble.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Src/math_sun.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_acos.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_acosh.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_asin.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_atan2.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_atanh.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_cosh.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_exp.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_fmod.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_gamma.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_gamma_r.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_hypot.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_lgamma.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_lgamma_r.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_log.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_log10.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_pow.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_remainder.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_rem_pio2.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_sinh.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/fminmaxdim.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/k_cos.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/k_rem_pio2.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/k_sin.c"),
+
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_acos.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_acosh.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_asin.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_atan2.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_atanh.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_cosh.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_exp.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_fmod.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_gamma.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_gamma_r.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_hypot.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_lgamma.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_lgamma_r.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_log.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_log10.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_pow.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_remainder.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_rem_pio2.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_sinh.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_sqrt.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/fminmaxdim.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/k_cos.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/k_rem_pio2.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/k_sin.c"),
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/k_standard.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/k_tan.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_asinh.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_atan.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_cbrt.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_ceil.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_copysign.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_cos.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_erf.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_expm1.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_floor.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_frexp.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_ilogb.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_ldexp.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_lib_version.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_log1p.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_logb.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_matherr.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_modf.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_nextafter.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_rint.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_signgam.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_sin.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_tan.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_tanh.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_acos.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_acosh.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_asin.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_atan2.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_atanh.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_cosh.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_exp.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_fmod.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_gamma.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_hypot.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_lgamma.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_log.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_log10.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_pow.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_remainder.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_sinh.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/e_sqrt.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/k_tan.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_asinh.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_atan.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_cbrt.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_ceil.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_copysign.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_cos.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_erf.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_expm1.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_floor.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_frexp.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_ilogb.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_ldexp.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_lib_version.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_log1p.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_logb.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_matherr.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_modf.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_nextafter.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_rint.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_signgam.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_sin.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_tan.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/s_tanh.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_acos.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_acosh.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_asin.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_atan2.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_atanh.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_cosh.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_exp.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_fmod.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_gamma.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_hypot.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_lgamma.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_log.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_log10.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_pow.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_remainder.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_sinh.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_sqrt.c"),
+        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Src/math_sun.c"),
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/PPC_EABI/SRC/math_ppc.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common_Embedded/Math/Double_precision/w_sqrt.c"),
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common/Src/extras.c"),
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common/Src/stat.c"),
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common/Src/stdio_posix.c")

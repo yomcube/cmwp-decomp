@@ -48,7 +48,6 @@
 1 SLAM_TECHNOLOGY/Slam_Core/MenuTimeSlicedFunctions.cpp
 1 SLAM_TECHNOLOGY/Slam_Core/MenuVariable.cpp
 1 SLAM_TECHNOLOGY/Slam_Core/mt19937ar.cpp
-1 SLAM_TECHNOLOGY/Slam_Core/mt19937ar.cpp
 1 SLAM_TECHNOLOGY/Slam_Core/PGFimage.cpp
 1 SLAM_TECHNOLOGY/Slam_Core/Platform.cpp
 1 SLAM_TECHNOLOGY/Slam_Core/PlatformAudio.cpp

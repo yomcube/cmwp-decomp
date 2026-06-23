@@ -1,5 +1,5 @@
-#ifndef PRIVATE_PPC_EABI_INIT_H
-#define PRIVATE_PPC_EABI_INIT_H
+#ifndef PPC_EABI_INIT_H
+#define PPC_EABI_INIT_H
 
 #include <decomp.h>
 
@@ -19,4 +19,4 @@ DECL_WEAK void exit(int status);
 }
 #endif  // __cplusplus
 
-#endif  // PRIVATE_PPC_EABI_INIT_H
+#endif  // PPC_EABI_INIT_H
