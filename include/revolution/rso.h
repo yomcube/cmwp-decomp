@@ -1,7 +1,7 @@
-#ifndef RSO_H
-#define RSO_H
+#ifndef REVOLUTION_RSO_H
+#define REVOLUTION_RSO_H
 
-#include "revolution/types.h"
+#include <revolution/types.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,33 +22,39 @@ typedef struct RSOImportTable RSOImportTable;
 typedef struct RSORel RSORel;
 typedef struct RSOExportFuncTable RSOExportFuncTable;
 
-enum RSOFL { RSO_FL_NON, RSO_FL_INTERNAL, RSO_FL_EXTERNAL };
+typedef enum {
+    RSO_FL_NON = 0,
+    RSO_FL_INTERNAL,
+    RSO_FL_EXTERNAL,
+} RSOFixedLevel;
 
 struct RSOImportTable {
-    u32 strOffset;
-    u32 value;
-    u32 relOffset;
+    u32 strOffset;  // 0x00
+    u32 value;      // 0x04
+    u32 relOffset;  // 0x08
 };
 struct RSOExportTable {
-    u32 strOffset;
-    u32 value;
-    u32 section;
-    u32 hash;
+    u32 strOffset;  // 0x00
+    u32 value;      // 0x04
+    u32 section;    // 0x08
+    RSOHash hash;   // 0x0C
 };
 
+// not part of DWARF from the original object
+// but is part of DWARF from other games
 struct RSOExportFuncTable {
-    const char* symbol_name;
-    u32* symbol_ptr;
+    const char* symbol_name;  // 0x00
+    u32* symbol_ptr;          // 0x04
 };
 
 struct RSOObjectList {
-    RSOObjectInfo* head;
-    RSOObjectInfo* tail;
+    RSOObjectInfo* head;  // 0x00
+    RSOObjectInfo* tail;  // 0x04
 };
 
 struct RSOObjectLink {
-    RSOObjectInfo* next;
-    RSOObjectInfo* prev;
+    RSOObjectInfo* next;  // 0x00
+    RSOObjectInfo* prev;  // 0x04
 };
 
 struct RSOObjectInfo {
@@ -61,9 +67,9 @@ struct RSOObjectInfo {
 };
 
 struct RSOSymbolHeader {
-    u32 tableOffset;
-    u32 tableSize;
-    u32 stringOffset;
+    u32 tableOffset;   // 0x00
+    u32 tableSize;     // 0x04
+    u32 stringOffset;  // 0x08
 };
 
 struct RSOObjectHeader {
@@ -85,37 +91,69 @@ struct RSOObjectHeader {
 };
 
 struct RSOSectionInfo {
-    u32 offset;
-    u32 size;
+    u32 offset;  // 0x00
+    u32 size;    // 0x04
 };
 
 struct RSORel {
-    u32 offset;
-    RSOObjectInfo* info;
-    u32 addend;
+    u32 offset;  // 0x00
+    u32 info;    // 0x04
+    u32 addend;  // 0x08
 };
 
-int RSOLocateObject(void*, void*);
-int RSOLocateObjectFixed(void*, void*);
+DECL_WEAK void RSONotifyModuleLoaded(RSOObjectHeader* moduleHeader);
+DECL_WEAK void RSONotifyModuleUnloaded(RSOObjectHeader* moduleHeader);
+DECL_WEAK void RSONotifyPreRSOLink(RSOObjectHeader* impHeader, const RSOObjectHeader* expHeader);
+DECL_WEAK void RSONotifyPostRSOLink(RSOObjectHeader* impHeader, const RSOObjectHeader* expHeader);
+DECL_WEAK void RSONotifyPreRSOLinkFar(RSOObjectHeader* moduleHeader, const RSOObjectHeader* expHeader, void* buff);
+DECL_WEAK void RSONotifyPostRSOLinkFar(RSOObjectHeader* moduleHeader, const RSOObjectHeader* expHeader, void* buff);
 
-void RSOUnresolveImportSymbolAll(void* rso);
+BOOL RSOLocateObject(void* newModule, void* bss);
+BOOL RSOLocateObjectFixed(void* newModule, void* bss);
+BOOL RSOStaticLocateObject(void* newModule);
 
-BOOL RSOListInit(void*);
-BOOL RSOLinkList(void*, void*);
+BOOL RSOUnLocateObject(void* oldModule);
 
-BOOL RSOIsImportSymbolResolvedAll(const RSOObjectHeader*);
+RSOImportTable* RSOGetImport(const RSOSymbolHeader* imp);
+RSOExportTable* RSOGetExport(const RSOSymbolHeader* exp);
 
-int RSOGetJumpCodeSize(const RSOObjectHeader*);
-int RSOGetJumpCodeSize(const RSOObjectHeader*);
-void RSOMakeJumpCode(const RSOObjectHeader*, void*);
+int RSOLink(RSOObjectHeader* rsoImp, const RSOObjectHeader* rsoExp);
+void RSOUnLink(RSOObjectHeader* rsoImp, const RSOObjectHeader* rsoExp)
+#if SDK_VERSION < 20091112  // :/
+    NO_INLINE
+#endif
+    ;
 
-const void* RSOFindExportSymbolAddr(const RSOObjectHeader*, const char*);
-int RSOLinkJump(RSOObjectHeader*, const RSOObjectHeader*, void*);
+RSOHash RSOGetHash(const char* symbolname);
 
-void RSORelocateImportSymbol(RSOObjectHeader* rso, RSOImportTable* impTab, int impIndex);
+int RSOGetNumImportSymbols(const RSOSymbolHeader* imp);
+int RSOGetNumImportSymbolsUnresolved(const RSOObjectHeader* rso);
+char* RSOGetImportSymbolName(const RSOSymbolHeader* imp, int index);
+BOOL RSOIsImportSymbolResolved(const RSOObjectHeader* rso, int index);
+BOOL RSOIsImportSymbolResolvedAll(const RSOObjectHeader* rso);
+
+int RSOGetNumExportSymbols(const RSOSymbolHeader* exp);
+char* RSOGetExportSymbolName(const RSOSymbolHeader* exp, int index);
+void* RSOGetExportSymbolAddr(const RSOObjectHeader* rso, int index);
+void* RSOFindExportSymbolAddr(const RSOObjectHeader* rso, const char* name);
+RSOExportTable* RSOFindExportSymbol(const RSOObjectHeader* rso, const char* name);
+
+BOOL RSOListInit(void* staticRso);
+BOOL RSOLinkList(void* newRso, void* bss);
+BOOL RSOLinkListFixed(void* newRso, void* bss, RSOFixedLevel fixed_level);
+BOOL RSOUnLinkList(void* oldRso);
+
+u32 RSOGetFixedSize(void* rso, RSOFixedLevel fixed_level);
+
+int RSOGetFarCodeSize(RSOObjectHeader* rsoImp, const RSOObjectHeader* rsoExp);
+int RSOLinkFar(RSOObjectHeader* rsoImp, const RSOObjectHeader* rsoExp, void* buff);
+
+int RSOGetJumpCodeSize(const RSOObjectHeader* rsoExp);
+void RSOMakeJumpCode(const RSOObjectHeader* rsoExp, void* buff);
+int RSOLinkJump(RSOObjectHeader* rsoImp, const RSOObjectHeader* rsoExp, void* buff);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // RSO_H
+#endif  // REVOLUTION_RSO_H

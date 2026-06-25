@@ -794,7 +794,7 @@ config.libs = [
     ]),
 
     RVLSDKLib("rso", [
-        Object(NonMatching, "RVL_SDK/rso/RSOLink.c"),
+        Object(Matching,    "RVL_SDK/rso/RSOLink.c"),
     ]),
 
     RVLSDKLib("NdevExi2A", [
@@ -1149,7 +1149,7 @@ config.libs = [
         Object(NonMatching, "RVL_SDK/os/OSFatal.c"),
         Object(NonMatching, "RVL_SDK/os/OSFont.c"),
         Object(NonMatching, "RVL_SDK/os/OSInterrupt.c"),
-        Object(NonMatching, "RVL_SDK/os/OSLink.c"),
+        Object(Matching,    "RVL_SDK/os/OSLink.c"),
         Object(NonMatching, "RVL_SDK/os/OSMessage.c"),
         Object(NonMatching, "RVL_SDK/os/OSMemory.c"),
         Object(NonMatching, "RVL_SDK/os/OSMutex.c"),

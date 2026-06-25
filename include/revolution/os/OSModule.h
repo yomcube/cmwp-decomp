@@ -19,13 +19,13 @@ typedef struct OSImportInfo OSImportInfo;
 typedef struct OSRel OSRel;
 
 struct OSModuleQueue {
-    OSModuleInfo* head;
-    OSModuleInfo* tail;
+    OSModuleInfo* head;  // 0x00
+    OSModuleInfo* tail;  // 0x04
 };
 
 struct OSModuleLink {
-    OSModuleInfo* next;
-    OSModuleInfo* prev;
+    OSModuleInfo* next;  // 0x04
+    OSModuleInfo* prev;  // 0x08
 };
 
 struct OSModuleInfo {
@@ -67,16 +67,10 @@ struct OSModuleHeader {
 #endif
 };
 
-#define OSGetSectionInfo(module) ((OSSectionInfo*)(((OSModuleInfo*)(module))->sectionInfoOffset))
-
 struct OSSectionInfo {
     u32 offset;
     u32 size;
 };
-
-// OSSectionInfo.offset bit
-#define OS_SECTIONINFO_EXEC 0x1
-#define OS_SECTIONINFO_OFFSET(offset) ((offset) & ~0x1)
 
 struct OSImportInfo {
     OSModuleID id;  // external module id
@@ -89,11 +83,6 @@ struct OSRel {
     u8 section;
     u32 addend;
 };
-
-#define R_DOLPHIN_NOP 201      //  C9h current offset += OSRel.offset
-#define R_DOLPHIN_SECTION 202  //  CAh current section = OSRel.section
-#define R_DOLPHIN_END 203      //  CBh
-#define R_DOLPHIN_MRKREF 204   //  CCh
 
 void OSSetStringTable(void* stringTable);
 BOOL OSLink(OSModuleInfo* newModule, void* bss);
