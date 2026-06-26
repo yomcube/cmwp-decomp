@@ -5,6 +5,9 @@
 
 #include <revolution/types.h>
 
+#include <revolution/os/OSMemMap.h>
+#include <revolution/os/OSTime.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif  // __cplusplus
@@ -42,8 +45,8 @@ void* OSUncachedToCached(void* ucaddr);
 /* TICKS CONVERSION */
 /********************/
 
-u32 __OSBusClock AT_ADDRESS(OS_BASE_CACHED | 0x00F8);
-u32 __OSCoreClock AT_ADDRESS(OS_BASE_CACHED | 0x00FC);
+u32 __OSBusClock AT_ADDRESS(OS_BASE_CACHED | OS_ADDR_BUS_CLOCK_SPEED);
+u32 __OSCoreClock AT_ADDRESS(OS_BASE_CACHED | OS_ADDR_CPU_CLOCK_SPEED);
 
 #define OS_BUS_CLOCK __OSBusClock
 #define OS_CORE_CLOCK __OSCoreClock
@@ -101,6 +104,7 @@ void OSRegisterVersion(const char* id);
 #include <revolution/os/OSCache.h>
 #include <revolution/os/OSDC.h>
 #include <revolution/os/OSException.h>
+#include <revolution/os/OSFont.h>
 #include <revolution/os/OSIC.h>
 #include <revolution/os/OSInterrupt.h>
 #include <revolution/os/OSL2.h>
@@ -108,12 +112,17 @@ void OSRegisterVersion(const char* id);
 #include <revolution/os/OSMemory.h>
 #include <revolution/os/OSMessage.h>
 #include <revolution/os/OSMutex.h>
+#include <revolution/os/OSReboot.h>
+#include <revolution/os/OSReset.h>
+#include <revolution/os/OSRtc.h>
+#include <revolution/os/OSSemaphore.h>
+#include <revolution/os/OSStopwatch.h>
 #include <revolution/os/OSThread.h>
-#include <revolution/os/OSTime.h>
+#include <revolution/os/OSTimer.h>
+#include <revolution/os/OSUtf.h>
 
 #include <revolution/os/OSError.h>
 #include <revolution/os/OSModule.h>
-#include <revolution/os/OSReset.h>
 
 #ifdef __cplusplus
 }

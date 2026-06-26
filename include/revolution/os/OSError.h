@@ -1,8 +1,9 @@
 #ifndef REVOLUTION_OS_ERROR_H
 #define REVOLUTION_OS_ERROR_H
 
-#include <revolution/os/OSContext.h>
 #include <revolution/types.h>
+
+#include <revolution/os/OSContext.h>
 #include <stdarg.h>
 
 #ifdef __cplusplus
@@ -38,8 +39,6 @@ typedef void (*OSErrorHandler)(OSError error, OSContext* context, ...);
 #define OS_ERROR_MAX (OS_ERROR_THERMAL_INTERRUPT + 1)
 
 OSErrorHandler OSSetErrorHandler(OSError error, OSErrorHandler handler);
-extern u32 __OSFpscrEnableBits;
-extern OSErrorHandler __OSErrorTable[17];
 
 #ifdef __cplusplus
 }

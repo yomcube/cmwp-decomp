@@ -1,19 +1,17 @@
-/* from wii-ipl */
-
 #ifndef REVOLUTION_GX_TRANSFORM_H
 #define REVOLUTION_GX_TRANSFORM_H
 
-#include <revolution/types.h>
 #include <revolution/gx/GXEnum.h>
 #include <revolution/gx/GXStruct.h>
 #include <revolution/mtx/GeoTypes.h>
+#include <revolution/types.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define GX_PROJECTION_SZ  7
-#define GX_VIEWPORT_SZ  6
+#define GX_PROJECTION_SZ 7
+#define GX_VIEWPORT_SZ 6
 
 void GXSetProjection(const Mtx44 mtx, GXProjectionType type);
 void GXSetProjectionv(const f32* ptr);
@@ -43,4 +41,4 @@ inline void GXSetViewportv(const f32* view) {
 }
 #endif
 
-#endif // REVOLUTION_GX_TRANSFORM_H
+#endif  // REVOLUTION_GX_TRANSFORM_H

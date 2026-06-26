@@ -119,7 +119,7 @@ RSOExportTable* RSOGetExport(const RSOSymbolHeader* exp);
 
 int RSOLink(RSOObjectHeader* rsoImp, const RSOObjectHeader* rsoExp);
 void RSOUnLink(RSOObjectHeader* rsoImp, const RSOObjectHeader* rsoExp)
-#if SDK_VERSION < 20091112  // :/
+#if SDK_VERSION < 20091211  // :/
     NO_INLINE
 #endif
     ;

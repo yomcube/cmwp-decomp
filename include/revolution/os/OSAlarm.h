@@ -24,14 +24,21 @@ struct OSAlarm {
 };
 
 BOOL OSCheckAlarmQueue();
+
 void OSInitAlarm();
+
 void OSCreateAlarm(OSAlarm* alarm);
+
 void OSSetAlarm(OSAlarm* alarm, OSTime tick, OSAlarmHandler handler);
 void OSSetAbsAlarm(OSAlarm* alarm, OSTime time, OSAlarmHandler handler);
 void OSSetPeriodicAlarm(OSAlarm* alarm, OSTime start, OSTime period, OSAlarmHandler handler);
+
 void OSCancelAlarm(OSAlarm* alarm);
+
 void OSSetAlarmTag(OSAlarm* alarm, u32 tag);
+
 void OSCancelAlarms(u32 tag);
+
 void* OSGetAlarmUserData(OSAlarm* tag);
 
 #ifdef __cplusplus

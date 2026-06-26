@@ -29,7 +29,6 @@ u32 LCStoreData(void* destAddr, void* srcAddr, u32 nBytes);
 u32 LCQueueLength();
 void LCQueueWait(u32 len);
 void LCFlushQueue();
-void __OSCacheInit();
 
 #ifdef __cplusplus
 }

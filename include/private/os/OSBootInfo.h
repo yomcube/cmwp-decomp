@@ -7,6 +7,8 @@
 extern "C" {
 #endif  // __cplusplus
 
+/* uhhh gonna be here for now */
+
 typedef struct DVDDiskID {
     char gameName[4];
     char company[2];

@@ -14,6 +14,12 @@ extern "C" {
 BOOL DBIsDebuggerPresent();
 void DBPrintf(char* str, ...);
 
+#if SDK_VERSION < 20091211
+#define DB_PRINT(...) DBPrintf(__VA_ARGS__)
+#else
+#define DB_PRINT(...)
+#endif
+
 #ifdef __cplusplus
 }
 #endif  // __cplusplus

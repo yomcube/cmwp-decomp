@@ -46,7 +46,7 @@ static void __HIO2ClearChanInfo(HIO2Handle handle) {
         __HIO2Control[handle].disconnectCallback = NULL;
 }
 
-static void __HIO2ExtHandler(HIO2Handle handle) {
+static void __HIO2ExtHandler(HIO2Handle handle, OSContext* context) {
     if (__HIO2Control[handle].disconnectCallback != NULL) {
         __HIO2Control[handle].disconnectCallback(handle);
     }
@@ -54,7 +54,7 @@ static void __HIO2ExtHandler(HIO2Handle handle) {
     EXISetExiCallback(handle, NULL);
 }
 
-static void __HIO2ExiHandler(HIO2DeviceType handle) {
+static void __HIO2ExiHandler(HIO2DeviceType handle, OSContext* context) {
     if (handle == HIO2_DEVICE_2) {
         handle = HIO2_DEVICE_0;
     }
@@ -63,7 +63,7 @@ static void __HIO2ExiHandler(HIO2DeviceType handle) {
     }
 }
 
-static void __HIO2TxHandler(HIO2Handle handle) {
+static void __HIO2TxHandler(HIO2Handle handle, OSContext* context) {
     EXIDeselect(handle);
     EXIUnlock(handle);
     if (__HIO2Control[handle].writeCallback != NULL) {
@@ -71,7 +71,7 @@ static void __HIO2TxHandler(HIO2Handle handle) {
     }
 }
 
-static void __HIO2RxHandler(HIO2Handle handle) {
+static void __HIO2RxHandler(HIO2Handle handle, OSContext* context) {
     EXIDeselect(handle);
     EXIUnlock(handle);
     if (__HIO2Control[handle].readCallback != NULL) {

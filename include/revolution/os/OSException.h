@@ -26,7 +26,7 @@ extern "C" {
 #define __OS_EXCEPTION_THERMAL_INTERRUPT 14
 #define __OS_EXCEPTION_MEMORY_PROTECTION 15
 #define __OS_EXCEPTION_FLOATING_POINT_EXCEPTION 16
-#define __OS_EXCEPTION_MAX (__OS_EXCEPTION_THERMAL_INTERRUPT + 1)
+#define __OS_EXCEPTION_MAX (__OS_EXCEPTION_FLOATING_POINT_EXCEPTION + 1)
 
 typedef u8 __OSException;
 typedef void (*__OSExceptionHandler)(__OSException exception, OSContext* context);
@@ -55,6 +55,8 @@ __OSExceptionHandler __OSGetExceptionHandler(__OSException exception);
     mfspr r0, GQR7;                                                                                                                                  \
     stw r0, OS_CONTEXT_GQR7(context);
 // clang-format on
+
+void OSDefaultExceptionHandler(__OSException exception, OSContext* context);
 
 #ifdef __cplusplus
 }

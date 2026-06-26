@@ -1,10 +1,8 @@
-/* from wii-ipl */
-
 #ifndef REVOLUTION_GX_CULLING_H
 #define REVOLUTION_GX_CULLING_H
 
-#include <revolution/types.h>
 #include <revolution/gx/GXEnum.h>
+#include <revolution/types.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,4 +17,4 @@ void GXSetCoPlanar(GXBool enable);
 }
 #endif
 
-#endif // REVOLUTION_GX_CULLING_H
+#endif  // REVOLUTION_GX_CULLING_H

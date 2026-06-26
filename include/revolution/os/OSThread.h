@@ -107,13 +107,13 @@ BOOL OSIsThreadTerminated(OSThread* thread);
 
 void OSYieldThread();
 
-int OSCreateThread(OSThread* thread, void* (*func)(void*), void* param, void* stack, u32 stackSize, OSPriority priority, u16 attr);
+BOOL OSCreateThread(OSThread* thread, void* (*func)(void*), void* param, void* stack, u32 stackSize, OSPriority priority, u16 attr);
 void OSExitThread(void* val);
 
-int OSJoinThread(OSThread* thread, void** val);
+BOOL OSJoinThread(OSThread* thread, void** val);
 void OSDetachThread(OSThread* thread);
 
-int OSSetThreadPriority(OSThread* thread, OSPriority priority);
+BOOL OSSetThreadPriority(OSThread* thread, OSPriority priority);
 s32 OSGetThreadPriority(OSThread* thread);
 
 OSThread* OSSetIdleFunction(OSIdleFunction idleFunction, void* param, void* stack, u32 stackSize);

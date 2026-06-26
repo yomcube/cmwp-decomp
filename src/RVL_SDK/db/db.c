@@ -1,3 +1,5 @@
+#include <revolution/sdkconfig.h>
+
 #include <revolution/db.h>
 
 #include <revolution/base.h>
@@ -65,4 +67,10 @@ void __DBSetPresent(u32 value) {
 }
 
 void DBPrintf(char* str, ...) {
+#ifdef DB_REIMPLEMENT_DBPRINT
+    va_list marker;
+    va_start(marker, msg);
+    OSVReport(msg, marker);
+    va_end(marker);
+#endif
 }

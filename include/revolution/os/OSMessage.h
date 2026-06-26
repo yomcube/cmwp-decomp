@@ -16,10 +16,12 @@ typedef struct OSMessageQueue {
     s32 usedCount;               // 0x1C
 } OSMessageQueue;
 
+#define OS_MESSAGE_BLOCK 0x01
+
 void OSInitMessageQueue(OSMessageQueue* mq, void* msgArray, s32 msgCount);
-int OSSendMessage(OSMessageQueue* mq, void* msg, s32 flags);
-int OSReceiveMessage(OSMessageQueue* mq, void* msg, s32 flags);
-int OSJamMessage(OSMessageQueue* mq, void* msg, s32 flags);
+BOOL OSSendMessage(OSMessageQueue* mq, void* msg, s32 flags);
+BOOL OSReceiveMessage(OSMessageQueue* mq, void* msg, s32 flags);
+BOOL OSJamMessage(OSMessageQueue* mq, void* msg, s32 flags);
 
 #ifdef __cplusplus
 }

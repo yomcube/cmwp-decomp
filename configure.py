@@ -216,12 +216,12 @@ cflags_base_all = [
 
 if config.version.startswith("20100817"):
     cflags_base_all.append("-DSDK_20091112")
-    cflags_base_all.append("-DSDK_VERSION=20091112")
+    cflags_base_all.append("-DSDK_VERSION=20091211")
     cflags_base_all.append("-DHBM_20100224")
     cflags_base_all.append("-DHBM_VERSION=20100224")
 elif config.version.startswith("20090820"):
     cflags_base_all.append("-DSDK_20090224")
-    cflags_base_all.append("-DSDK_VERSION=20090824")
+    cflags_base_all.append("-DSDK_VERSION=20090224")
     cflags_base_all.append("-DHBM_20080924")
     cflags_base_all.append("-DHBM_VERSION=20080924")
 
@@ -1137,36 +1137,36 @@ config.libs = [
 
     RVLSDKLib("os", [
         Object(NonMatching, "RVL_SDK/os/OS.c"),
-        Object(NonMatching, "RVL_SDK/os/OSAddress.c"),
-        Object(NonMatching, "RVL_SDK/os/OSAlarm.c"),
-        Object(NonMatching, "RVL_SDK/os/OSAlloc.c"),
-        Object(NonMatching, "RVL_SDK/os/OSArena.c"),
-        Object(NonMatching, "RVL_SDK/os/OSAudioSystem.c"),
-        Object(NonMatching, "RVL_SDK/os/OSCache.c"),
-        Object(NonMatching, "RVL_SDK/os/OSContext.c"),
-        Object(NonMatching, "RVL_SDK/os/OSError.c"),
+        Object(Matching,    "RVL_SDK/os/OSAddress.c"),
+        Object(Matching,    "RVL_SDK/os/OSAlarm.c"),
+        Object(Matching,    "RVL_SDK/os/OSAlloc.c"),
+        Object(Matching,    "RVL_SDK/os/OSArena.c"),
+        Object(Matching,    "RVL_SDK/os/OSAudioSystem.c"),
+        Object(Matching,    "RVL_SDK/os/OSCache.c"),
+        Object(Matching,    "RVL_SDK/os/OSContext.c"),
+        Object(Matching,    "RVL_SDK/os/OSError.c"),
         Object(NonMatching, "RVL_SDK/os/OSExec.c"),
-        Object(NonMatching, "RVL_SDK/os/OSFatal.c"),
-        Object(NonMatching, "RVL_SDK/os/OSFont.c"),
-        Object(NonMatching, "RVL_SDK/os/OSInterrupt.c"),
+        Object(Matching,    "RVL_SDK/os/OSFatal.c"),
+        Object(Matching,    "RVL_SDK/os/OSFont.c"),
+        Object(Matching,    "RVL_SDK/os/OSInterrupt.c"),
         Object(Matching,    "RVL_SDK/os/OSLink.c"),
-        Object(NonMatching, "RVL_SDK/os/OSMessage.c"),
-        Object(NonMatching, "RVL_SDK/os/OSMemory.c"),
-        Object(NonMatching, "RVL_SDK/os/OSMutex.c"),
-        Object(NonMatching, "RVL_SDK/os/OSReboot.c"),
+        Object(Matching,    "RVL_SDK/os/OSMessage.c"),
+        Object(Matching,    "RVL_SDK/os/OSMemory.c"),
+        Object(Matching,    "RVL_SDK/os/OSMutex.c"),
+        Object(Matching,    "RVL_SDK/os/OSReboot.c"),
         Object(NonMatching, "RVL_SDK/os/OSReset.c"),
-        Object(NonMatching, "RVL_SDK/os/OSRtc.c"),
-        Object(NonMatching, "RVL_SDK/os/OSSemaphore.c"),
-        Object(NonMatching, "RVL_SDK/os/OSStopwatch.c"),
-        Object(NonMatching, "RVL_SDK/os/OSSync.c"),
-        Object(NonMatching, "RVL_SDK/os/OSThread.c"),
-        Object(NonMatching, "RVL_SDK/os/OSTime.c"),
-        Object(NonMatching, "RVL_SDK/os/OSTimer.c"),
-        Object(NonMatching, "RVL_SDK/os/OSUtf.c"),
+        Object(Matching,    "RVL_SDK/os/OSRtc.c"),
+        Object(Matching,    "RVL_SDK/os/OSSemaphore.c"),
+        Object(Matching,    "RVL_SDK/os/OSStopwatch.c"),
+        Object(Matching,    "RVL_SDK/os/OSSync.c"),
+        Object(Matching,    "RVL_SDK/os/OSThread.c"),
+        Object(Matching,    "RVL_SDK/os/OSTime.c"),
+        Object(Matching,    "RVL_SDK/os/OSTimer.c"),
+        Object(Matching,    "RVL_SDK/os/OSUtf.c"),
         Object(NonMatching, "RVL_SDK/os/OSIpc.c"),
         Object(NonMatching, "RVL_SDK/os/OSStateTM.c"),
-        Object(NonMatching, "RVL_SDK/os/time.dolphin.c"),
-        Object(NonMatching, "RVL_SDK/os/init/__start.c"),
+        Object(Matching,    "RVL_SDK/os/time.dolphin.c", extra_cflags=["-O4,p"]),
+        Object(Matching,    "RVL_SDK/os/init/__start.c"),
         Object(NonMatching, "RVL_SDK/os/OSPlayRecord.c"),
         Object(NonMatching, "RVL_SDK/os/OSStateFlags.c"),
         Object(NonMatching, "RVL_SDK/os/OSNet.c"),
@@ -1175,7 +1175,7 @@ config.libs = [
         Object(NonMatching, "RVL_SDK/os/OSInstall.c"),
         Object(NonMatching, "RVL_SDK/os/OSCrc.c"),
         Object(NonMatching, "RVL_SDK/os/OSLaunch.c"),
-        Object(NonMatching, "RVL_SDK/os/init/__ppc_eabi_init.cpp")
+        Object(Matching,    "RVL_SDK/os/init/__ppc_eabi_init.cpp")
     ]),
 
     RVLSDKLib("pad", [

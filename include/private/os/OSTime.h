@@ -10,6 +10,8 @@ extern "C" {
 OSTime __OSGetSystemTime();
 OSTime __OSTimeToSystemTime(OSTime time);
 
+#define __OSSystemTime (OSTime*)0x800030D8
+
 #ifdef __cplusplus
 }
 #endif  // __cplusplus
