@@ -29,7 +29,7 @@ void __exception_info_constants(void** info, char** R2) {
 
 long __find_exception_addresses(void* myInfo, char* code_addr, void** start, void** end) {
     __eti_init_info* info = (__eti_init_info*)myInfo;
-    while (TRUE) {
+    while (true) {
         if (!(info->code_size != 0)) {
             break;
         }

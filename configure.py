@@ -588,7 +588,7 @@ config.libs = [
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common/Src/printf.c"),
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common/Src/qso.c"),
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/PPC_EABI/SRC/fenv.ppc.c"),
-        Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common/Src/rand.c"),
+        Object(Matching,    "MSL_C.PPCEABI.bare.H/MSL_Common/Src/rand.c"),
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common/Src/scanf.c"),
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common/Src/signal.c"),
         Object(NonMatching, "MSL_C.PPCEABI.bare.H/MSL_Common/Src/string.c"),
@@ -699,7 +699,7 @@ config.libs = [
     
     TRK([
         Object(NonMatching, "TRK_Hollywood_Revolution/__exception.c"),
-        Object(NonMatching, "TRK_Hollywood_Revolution/targsupp.c"),
+        Object(Matching,    "TRK_Hollywood_Revolution/targsupp.c"),
         Object(NonMatching, "TRK_Hollywood_Revolution/custconn/cc_ddh.c"),
         Object(NonMatching, "TRK_Hollywood_Revolution/custconn/cc_gdev.c"),
         Object(NonMatching, "TRK_Hollywood_Revolution/custconn/MWEvent_gc.c"),
