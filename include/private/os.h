@@ -13,6 +13,7 @@ extern "C" {
 #include <private/os/OSCache.h>
 #include <private/os/OSException.h>
 #include <private/os/OSExec.h>
+#include <private/os/OSIpc.h>
 #include <private/os/OSMutex.h>
 #include <private/os/OSReset.h>
 #include <private/os/OSRtc.h>

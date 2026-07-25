@@ -125,15 +125,15 @@ static asm void ConfigMEM1_24MB() {
     isync
     mfmsr r3
     ori r3, r3, 0x30
-    mtspr 0x1b, r3
+    mtspr SRR1, r3
     mflr r3
-    mtspr 0x1a, r3
+    mtspr SRR0, r3
     rfi
     // clang-format on
 #endif  // __MWERKS__
 }
 
-#if SDK_VERSION < 20090224
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
 static asm void ConfigMEM1_48MB() {
 #ifdef __MWERKS__
     // clang-format off
@@ -167,9 +167,9 @@ static asm void ConfigMEM1_48MB() {
     isync
     mfmsr r3
     ori r3, r3, 0x30
-    mtspr 0x1b, r3
+    mtspr SRR1, r3
     mflr r3
-    mtspr 0x1a, r3
+    mtspr SRR0, r3
     rfi
     // clang-format on
 #endif  // __MWERKS__
@@ -191,19 +191,25 @@ static asm void ConfigMEM2_52MB() {
     lis r5, 0xD00007FF@ha
     addi r5, r5, 0xD00007FF@l
     isync
-    mtspr 0x238, r7
-    mtspr 0x239, r4
-    mtspr 0x238, r3
+    mtspr DBAT4U, r7
+    mtspr DBAT4L, r4
+    mtspr DBAT4U, r3
     isync
-    mtspr 0x230, r7
-    mtspr 0x231, r7
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    mtspr IBAT4U, r7
+    mtspr IBAT4L, r4
+    mtspr IBAT4U, r3
+#else
+    mtspr IBAT4U, r7
+    mtspr IBAT4L, r7
+#endif
     isync
-    mtspr 0x23a, r7
-    mtspr 0x23b, r6
-    mtspr 0x23a, r5
+    mtspr DBAT5U, r7
+    mtspr DBAT5L, r6
+    mtspr DBAT5U, r5
     isync
-    mtspr 0x232, r7
-    mtspr 0x233, r7
+    mtspr IBAT5U, r7
+    mtspr IBAT5L, r7
     isync
     lis r4, 0x12000002@ha
     addi r4, r4, 0x12000002@l
@@ -214,25 +220,37 @@ static asm void ConfigMEM2_52MB() {
     lis r5, 0x9300007F@ha
     addi r5, r5, 0x9300007F@l
     isync
-    mtspr 0x23c, r7
-    mtspr 0x23d, r4
-    mtspr 0x23c, r3
+    mtspr DBAT6U, r7
+    mtspr DBAT6L, r4
+    mtspr DBAT6U, r3
     isync
-    mtspr 0x234, r7
-    mtspr 0x235, r7
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    mtspr IBAT6U, r7
+    mtspr IBAT6L, r4
+    mtspr IBAT6U, r3
+#else
+    mtspr IBAT6U, r7
+    mtspr IBAT6L, r7
+#endif
     isync
-    mtspr 0x23e, r7
-    mtspr 0x23f, r6
-    mtspr 0x23e, r5
+    mtspr DBAT7U, r7
+    mtspr DBAT7L, r6
+    mtspr DBAT7U, r5
     isync
-    mtspr 0x236, r7
-    mtspr 0x237, r7
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    mtspr IBAT7U, r7
+    mtspr IBAT7L, r6
+    mtspr IBAT7U, r5
+#else
+    mtspr IBAT7U, r7
+    mtspr IBAT7L, r7
+#endif
     isync
     mfmsr r3
     ori r3, r3, 0x30
-    mtspr 0x1b, r3
+    mtspr SRR1, r3
     mflr r3
-    mtspr 0x1a, r3
+    mtspr SRR0, r3
     rfi
     // clang-format on
 #endif  // __MWERKS__
@@ -253,19 +271,26 @@ static asm void ConfigMEM2_56MB() {
     lis r5, 0xD00007FF@ha
     addi r5, r5, 0xD00007FF@l
     isync
-    mtspr 0x238, r7
-    mtspr 0x239, r4
-    mtspr 0x238, r3
+    // They forgot to update this part for later SDK versions.
+    mtspr DBAT4U, r7
+    mtspr DBAT4L, r4
+    mtspr DBAT4U, r3
     isync
-    mtspr 0x230, r7
-    mtspr 0x231, r7
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    mtspr IBAT4U, r7
+    mtspr IBAT4L, r4
+    mtspr IBAT4U, r3
+#else
+    mtspr IBAT4U, r7
+    mtspr IBAT4L, r7
+#endif
     isync
-    mtspr 0x23a, r7
-    mtspr 0x23b, r6
-    mtspr 0x23a, r5
+    mtspr DBAT5U, r7
+    mtspr DBAT5L, r6
+    mtspr DBAT5U, r5
     isync
-    mtspr 0x232, r7
-    mtspr 0x233, r7
+    mtspr IBAT5U, r7
+    mtspr IBAT5L, r7
     isync
     lis r4, 0x12000002@ha
     addi r4, r4, 0x12000002@l
@@ -276,25 +301,37 @@ static asm void ConfigMEM2_56MB() {
     lis r5, 0x930000FF@ha
     addi r5, r5, 0x930000FF@l
     isync
-    mtspr 0x23c, r7
-    mtspr 0x23d, r4
-    mtspr 0x23c, r3
+    mtspr DBAT6U, r7
+    mtspr DBAT6L, r4
+    mtspr DBAT6U, r3
     isync
-    mtspr 0x234, r7
-    mtspr 0x235, r7
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    mtspr IBAT6U, r7
+    mtspr IBAT6L, r4
+    mtspr IBAT6U, r3
+#else
+    mtspr IBAT6U, r7
+    mtspr IBAT6L, r7
+#endif
     isync
-    mtspr 0x23e, r7
-    mtspr 0x23f, r6
-    mtspr 0x23e, r5
+    mtspr DBAT7U, r7
+    mtspr DBAT7L, r6
+    mtspr DBAT7U, r5
     isync
-    mtspr 0x236, r7
-    mtspr 0x237, r7
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    mtspr IBAT7U, r7
+    mtspr IBAT7L, r6
+    mtspr IBAT7U, r5
+#else
+    mtspr IBAT7U, r7
+    mtspr IBAT7L, r7
+#endif
     isync
     mfmsr r3
     ori r3, r3, 0x30
-    mtspr 0x1b, r3
+    mtspr SRR1, r3
     mflr r3
-    mtspr 0x1a, r3
+    mtspr SRR0, r3
     rfi
     // clang-format on
 #endif  // __MWERKS__
@@ -315,37 +352,43 @@ static asm void ConfigMEM2_64MB() {
     lis r5, 0xD00007FF@ha
     addi r5, r5, 0xD00007FF@l
     isync
-    mtspr 0x238, r7
-    mtspr 0x239, r4
-    mtspr 0x238, r3
+    mtspr DBAT4U, r7
+    mtspr DBAT4L, r4
+    mtspr DBAT4U, r3
     isync
-    mtspr 0x230, r7
-    mtspr 0x231, r7
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    mtspr IBAT4U, r7
+    mtspr IBAT4L, r4
+    mtspr IBAT4U, r3
+#else
+    mtspr IBAT4U, r7
+    mtspr IBAT4L, r7
+#endif
     isync
-    mtspr 0x23a, r7
-    mtspr 0x23b, r6
-    mtspr 0x23a, r5
+    mtspr DBAT5U, r7
+    mtspr DBAT5L, r6
+    mtspr DBAT5U, r5
     isync
-    mtspr 0x232, r7
-    mtspr 0x233, r7
+    mtspr IBAT5U, r7
+    mtspr IBAT5L, r7
     isync
-    mtspr 0x234, r7
-    mtspr 0x235, r7
+    mtspr IBAT6U, r7
+    mtspr IBAT6L, r7
     isync
-    mtspr 0x236, r7
-    mtspr 0x237, r7
+    mtspr IBAT7U, r7
+    mtspr IBAT7L, r7
     isync
-    mtspr 0x23c, r7
-    mtspr 0x23d, r7
+    mtspr DBAT6U, r7
+    mtspr DBAT6L, r7
     isync
-    mtspr 0x23e, r7
-    mtspr 0x23f, r7
+    mtspr DBAT7U, r7
+    mtspr DBAT7L, r7
     isync
     mfmsr r3
     ori r3, r3, 0x30
-    mtspr 0x1b, r3
+    mtspr SRR1, r3
     mflr r3
-    mtspr 0x1a, r3
+    mtspr SRR0, r3
     rfi
     // clang-format on
 #endif  // __MWERKS__
@@ -366,19 +409,25 @@ static asm void ConfigMEM2_112MB() {
     lis r5, 0xD0000FFF@ha
     addi r5, r5, 0xD0000FFF@l
     isync
-    mtspr 0x238, r7
-    mtspr 0x239, r4
-    mtspr 0x238, r3
+    mtspr DBAT4U, r7
+    mtspr DBAT4L, r4
+    mtspr DBAT4U, r3
     isync
-    mtspr 0x230, r7
-    mtspr 0x231, r7
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    mtspr IBAT4U, r7
+    mtspr IBAT4L, r4
+    mtspr IBAT4U, r3
+#else
+    mtspr IBAT4U, r7
+    mtspr IBAT4L, r7
+#endif
     isync
-    mtspr 0x23a, r7
-    mtspr 0x23b, r6
-    mtspr 0x23a, r5
+    mtspr DBAT5U, r7
+    mtspr DBAT5L, r6
+    mtspr DBAT5U, r5
     isync
-    mtspr 0x232, r7
-    mtspr 0x233, r7
+    mtspr IBAT5U, r7
+    mtspr IBAT5L, r7
     isync
     lis r4, 0x14000002@ha
     addi r4, r4, 0x14000002@l
@@ -389,25 +438,37 @@ static asm void ConfigMEM2_112MB() {
     lis r5, 0x960001FF@ha
     addi r5, r5, 0x960001FF@l
     isync
-    mtspr 0x23c, r7
-    mtspr 0x23d, r4
-    mtspr 0x23c, r3
+    mtspr DBAT6U, r7
+    mtspr DBAT6L, r4
+    mtspr DBAT6U, r3
     isync
-    mtspr 0x234, r7
-    mtspr 0x235, r7
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    mtspr IBAT6U, r7
+    mtspr IBAT6L, r4
+    mtspr IBAT6U, r3
+#else
+    mtspr IBAT6U, r7
+    mtspr IBAT6L, r7
+#endif
     isync
-    mtspr 0x23e, r7
-    mtspr 0x23f, r6
-    mtspr 0x23e, r5
+    mtspr DBAT7U, r7
+    mtspr DBAT7L, r6
+    mtspr DBAT7U, r5
     isync
-    mtspr 0x236, r7
-    mtspr 0x237, r7
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    mtspr IBAT7U, r7
+    mtspr IBAT7L, r6
+    mtspr IBAT7U, r5
+#else
+    mtspr IBAT7U, r7
+    mtspr IBAT7L, r7
+#endif
     isync
     mfmsr r3
     ori r3, r3, 0x30
-    mtspr 0x1b, r3
+    mtspr SRR1, r3
     mflr r3
-    mtspr 0x1a, r3
+    mtspr SRR0, r3
     rfi
     // clang-format on
 #endif  // __MWERKS__
@@ -428,43 +489,49 @@ static asm void ConfigMEM2_128MB() {
     lis r5, 0xD0000FFF@ha
     addi r5, r5, 0xD0000FFF@l
     isync
-    mtspr 0x238, r7
-    mtspr 0x239, r4
-    mtspr 0x238, r3
+    mtspr DBAT4U, r7
+    mtspr DBAT4L, r4
+    mtspr DBAT4U, r3
     isync
-    mtspr 0x230, r7
-    mtspr 0x231, r7
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    mtspr IBAT4U, r7
+    mtspr IBAT4L, r4
+    mtspr IBAT4U, r3
+#else
+    mtspr IBAT4U, r7
+    mtspr IBAT4L, r7
+#endif
     isync
-    mtspr 0x23a, r7
-    mtspr 0x23b, r6
-    mtspr 0x23a, r5
+    mtspr DBAT5U, r7
+    mtspr DBAT5L, r6
+    mtspr DBAT5U, r5
     isync
-    mtspr 0x232, r7
-    mtspr 0x233, r7
+    mtspr IBAT5U, r7
+    mtspr IBAT5L, r7
     isync
-    mtspr 0x234, r7
-    mtspr 0x235, r7
+    mtspr IBAT6U, r7
+    mtspr IBAT6L, r7
     isync
-    mtspr 0x236, r7
-    mtspr 0x237, r7
+    mtspr IBAT7U, r7
+    mtspr IBAT7L, r7
     isync
-    mtspr 0x23c, r7
-    mtspr 0x23d, r7
+    mtspr DBAT6U, r7
+    mtspr DBAT6L, r7
     isync
-    mtspr 0x23e, r7
-    mtspr 0x23f, r7
+    mtspr DBAT7U, r7
+    mtspr DBAT7L, r7
     isync
     mfmsr r3
     ori r3, r3, 0x30
-    mtspr 0x1b, r3
+    mtspr SRR1, r3
     mflr r3
-    mtspr 0x1a, r3
+    mtspr SRR0, r3
     rfi
     // clang-format on
 #endif  // __MWERKS__
 }
 
-#if SDK_VERSION < 20090224
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
 static asm void ConfigMEM_ES1_0() {
 #ifdef __MWERKS__
     // clang-format off
@@ -486,9 +553,9 @@ static asm void ConfigMEM_ES1_0() {
     isync
     mfmsr r3
     ori r3, r3, 0x30
-    mtspr 0x1b, r3
+    mtspr SRR1, r3
     mflr r3
-    mtspr 0x1a, r3
+    mtspr SRR0, r3
     rfi
     // clang-format on
 #endif  // __MWERKS__
@@ -595,28 +662,49 @@ static asm void RealMode(register u32 addr) {
     // clang-format off
     nofralloc
     clrlwi addr, addr, 2
-    mtsrr0 addr
+    mtspr SRR0, addr
     mfmsr addr
     rlwinm addr, addr, 0, 28, 25
-    mtsrr1 addr
+    mtspr SRR1, addr
     rfi
     // clang-format on
 #endif  // __MWERKS__
 }
 
-void BATConfig(u32 arg0) {
+#if SDK_VERSION >= 20090224
+void BATConfig(u32 arg0)
+#else
+void BATConfig()
+#endif
+{
     u32 mem1Size;
     u32 mem2Size;
     u32 mem2End;
 
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    if (*(u32*)OSPhysicalToCached(OS_ADDR_HOLLYWOOD_REVISION) == 0) {
+        // @bug Checks function address rather than result
+        // NOLINTNEXTLINE (-Wtautological-pointer-compare)
+        if (OSGetPhysicalMem1Size == 0) {
+            RealMode((u32)ConfigMEM_ES1_0);
+            return;
+        }
+    }
+#endif
+
     mem1Size = OSGetConsoleSimulatedMem1Size();
-    if ((mem1Size < OSGetPhysicalMem1Size()) && ((u32)(mem1Size) == 0x01800000U)) {
+    if (mem1Size < OSGetPhysicalMem1Size() && (u32)mem1Size == 0x01800000) {
         DCInvalidateRange((void*)0x81800000, 0x01800000);
         __MEMRegs[MEM_CONFIG] = 2;
     }
     if (mem1Size <= 0x01800000U) {
         RealMode((u32)ConfigMEM1_24MB);
     }
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    else if (mem1Size <= 0x03000000U) {
+        RealMode((u32)ConfigMEM1_48MB);
+    }
+#endif
     mem2Size = OSGetConsoleSimulatedMem2Size();
     mem2End = *(u32*)OSPhysicalToCached(OS_ADDR_ACCESSIBLE_MEM2);
     if (mem2Size <= 0x04000000U) {
@@ -634,8 +722,10 @@ void BATConfig(u32 arg0) {
             RealMode((u32)ConfigMEM2_128MB);
         }
     }
+#if SDK_VERSION >= 20090224
     do {
     } while (arg0 != 0xBA2CF);
+#endif
 }
 
 void OSDisableCodeExecOnMEM1Hi8MB() {
@@ -696,9 +786,11 @@ void __OSInitMemoryProtection() {
     static BOOL initialized;
     BOOL enabled;
 
+#if SDK_VERSION >= 20090224
     if (initialized) {
         return;
     }
+#endif
 
     enabled = OSDisableInterrupts();
 
@@ -712,7 +804,11 @@ void __OSInitMemoryProtection() {
     __OSSetInterruptHandler(__OS_INTERRUPT_MEM_3, MEMIntrruptHandler);
     __OSSetInterruptHandler(__OS_INTERRUPT_MEM_ADDRESS, MEMIntrruptHandler);
     OSRegisterShutdownFunction(&ShutdownFunctionInfo);
+#if SDK_VERSION >= 20090224
     BATConfig(0xBA2CF);
+#else
+    BATConfig();
+#endif
     __OSUnmaskInterrupts(OS_INTERRUPTMASK_MEM_ADDRESS);
     initialized = TRUE;
     OSRestoreInterrupts(enabled);

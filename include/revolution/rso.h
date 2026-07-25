@@ -8,19 +8,10 @@ extern "C" {
 #endif
 
 #define RSO_VERSION 1
-#define RSO_FAR_JUMP_SIZE 24
 
-typedef struct RSOObjectHeader RSOObjectHeader;
+#define RSO_FAR_JUMP_SIZE 0x18
+
 typedef u32 RSOHash;
-typedef struct RSOObjectList RSOObjectList;
-typedef struct RSOObjectLink RSOObjectLink;
-typedef struct RSOObjectInfo RSOObjectInfo;
-typedef struct RSOSymbolHeader RSOSymbolHeader;
-typedef struct RSOSectionInfo RSOSectionInfo;
-typedef struct RSOExportTable RSOExportTable;
-typedef struct RSOImportTable RSOImportTable;
-typedef struct RSORel RSORel;
-typedef struct RSOExportFuncTable RSOExportFuncTable;
 
 typedef enum {
     RSO_FL_NON = 0,
@@ -28,85 +19,100 @@ typedef enum {
     RSO_FL_EXTERNAL,
 } RSOFixedLevel;
 
-struct RSOImportTable {
+typedef struct RSOSectionInfo {
+    u32 offset;  // 0x00
+    u32 size;    // 0x04
+} RSOSectionInfo;
+
+typedef struct RSOSymbolHeader {
+    u32 tableOffset;  // 0x00
+    u32 tableSize;    // 0x04
+
+    u32 stringOffset;  // 0x08
+} RSOSymbolHeader;
+
+typedef struct RSOObjectInfo RSOObjectInfo;
+typedef struct RSOObjectLink {
+    RSOObjectInfo* next;  // 0x00
+    RSOObjectInfo* prev;  // 0x04
+} RSOObjectLink;
+
+typedef struct RSOObjectList {
+    RSOObjectInfo* head;  // 0x00
+    RSOObjectInfo* tail;  // 0x04
+} RSOObjectList;
+
+struct RSOObjectInfo {
+    RSOObjectLink link;  // 0x00
+
+    u32 numSections;        // 0x08
+    u32 sectionInfoOffset;  // 0x0C
+
+    u32 nameOffset;  // 0x10
+    u32 nameSize;    // 0x14
+
+    u32 version;  // 0x18
+};
+
+typedef struct RSOObjectHeader {
+    RSOObjectInfo info;  // 0x00
+    u32 bssSize;         // 0x1C
+
+    u8 prologSection;      // 0x20
+    u8 epilogSection;      // 0x21
+    u8 unresolvedSection;  // 0x22
+    u8 bssSection;         // 0x23
+
+    u32 prolog;      // 0x24
+    u32 epilog;      // 0x28
+    u32 unresolved;  // 0x2C
+
+    u32 internalRelOffset;  // 0x30
+    u32 internalRelSize;    // 0x34
+    u32 externalRelOffset;  // 0x38
+    u32 externalRelSize;    // 0x3C
+
+    RSOSymbolHeader expHeader;  // 0x40
+    RSOSymbolHeader impHeader;  // 0x4C
+} RSOObjectHeader;
+
+typedef struct RSOImportTable {
     u32 strOffset;  // 0x00
     u32 value;      // 0x04
     u32 relOffset;  // 0x08
-};
-struct RSOExportTable {
+} RSOImportTable;
+
+typedef struct RSOExportTable {
     u32 strOffset;  // 0x00
     u32 value;      // 0x04
     u32 section;    // 0x08
-    RSOHash hash;   // 0x0C
-};
+    u32 hash;       // 0x0C
+} RSOExportTable;
 
-// not part of DWARF from the original object
-// but is part of DWARF from other games
-struct RSOExportFuncTable {
-    const char* symbol_name;  // 0x00
-    u32* symbol_ptr;          // 0x04
-};
-
-struct RSOObjectList {
-    RSOObjectInfo* head;  // 0x00
-    RSOObjectInfo* tail;  // 0x04
-};
-
-struct RSOObjectLink {
-    RSOObjectInfo* next;  // 0x00
-    RSOObjectInfo* prev;  // 0x04
-};
-
-struct RSOObjectInfo {
-    /*0x00*/ RSOObjectLink link;
-    /*0x08*/ u32 numSections;
-    /*0x0C*/ u32 sectionInfoOffset;
-    /*0x10*/ u32 nameOffset;
-    /*0x14*/ u32 nameSize;
-    /*0x18*/ u32 version;
-};
-
-struct RSOSymbolHeader {
-    u32 tableOffset;   // 0x00
-    u32 tableSize;     // 0x04
-    u32 stringOffset;  // 0x08
-};
-
-struct RSOObjectHeader {
-    /*0x00*/ RSOObjectInfo info;
-    /*0x1C*/ u32 bssSize;
-    /*0x20*/ u8 prologSection;
-    /*0x21*/ u8 epilogSection;
-    /*0x22*/ u8 unresolvedSection;
-    /*0x23*/ u8 bssSection;
-    /*0x24*/ u32 prolog;
-    /*0x28*/ u32 epilog;
-    /*0x2C*/ u32 unresolved;
-    /*0x30*/ u32 internalRelOffset;
-    /*0x34*/ u32 internalRelSize;
-    /*0x38*/ u32 externalRelOffset;
-    /*0x3C*/ u32 externalRelSize;
-    /*0x40*/ RSOSymbolHeader expHeader;
-    /*0x4C*/ RSOSymbolHeader impHeader;
-};
-
-struct RSOSectionInfo {
-    u32 offset;  // 0x00
-    u32 size;    // 0x04
-};
-
-struct RSORel {
+typedef struct RSORel {
     u32 offset;  // 0x00
     u32 info;    // 0x04
     u32 addend;  // 0x08
-};
+} RSORel;
 
-DECL_WEAK void RSONotifyModuleLoaded(RSOObjectHeader* moduleHeader);
-DECL_WEAK void RSONotifyModuleUnloaded(RSOObjectHeader* moduleHeader);
-DECL_WEAK void RSONotifyPreRSOLink(RSOObjectHeader* impHeader, const RSOObjectHeader* expHeader);
-DECL_WEAK void RSONotifyPostRSOLink(RSOObjectHeader* impHeader, const RSOObjectHeader* expHeader);
-DECL_WEAK void RSONotifyPreRSOLinkFar(RSOObjectHeader* moduleHeader, const RSOObjectHeader* expHeader, void* buff);
-DECL_WEAK void RSONotifyPostRSOLinkFar(RSOObjectHeader* moduleHeader, const RSOObjectHeader* expHeader, void* buff);
+// not part of DWARF from the original object
+// but is part of DWARF from other games
+typedef struct RSOExportFuncTable {
+    const char* symbol_name;  // 0x00
+    u32* symbol_ptr;          // 0x04
+} RSOExportFuncTable;
+
+#if SDK_VERSION > 20090224 && !defined(SDK_IPL)
+DECL_WEAK void RSONotifyModuleLoaded(RSOObjectHeader* moduleHeader) NO_INLINE;
+DECL_WEAK void RSONotifyModuleUnloaded(RSOObjectHeader* moduleHeader) NO_INLINE;
+DECL_WEAK void RSONotifyPreRSOLink(RSOObjectHeader* impHeader, const RSOObjectHeader* expHeader) NO_INLINE;
+DECL_WEAK void RSONotifyPostRSOLink(RSOObjectHeader* impHeader, const RSOObjectHeader* expHeader) NO_INLINE;
+DECL_WEAK void RSONotifyPreRSOLinkFar(RSOObjectHeader* moduleHeader, const RSOObjectHeader* expHeader, void* buff) NO_INLINE;
+DECL_WEAK void RSONotifyPostRSOLinkFar(RSOObjectHeader* moduleHeader, const RSOObjectHeader* expHeader, void* buff) NO_INLINE;
+#else
+DECL_WEAK void RSONotifyLink(RSOObjectHeader* moduleHeader) NO_INLINE;
+DECL_WEAK void RSONotifyUnlink(RSOObjectHeader* moduleHeader) NO_INLINE;
+#endif
 
 BOOL RSOLocateObject(void* newModule, void* bss);
 BOOL RSOLocateObjectFixed(void* newModule, void* bss);
@@ -119,12 +125,12 @@ RSOExportTable* RSOGetExport(const RSOSymbolHeader* exp);
 
 int RSOLink(RSOObjectHeader* rsoImp, const RSOObjectHeader* rsoExp);
 void RSOUnLink(RSOObjectHeader* rsoImp, const RSOObjectHeader* rsoExp)
-#if SDK_VERSION < 20091211  // :/
+#if SDK_VERSION == 20090224 && !defined(SDK_IPL)
     NO_INLINE
 #endif
     ;
 
-RSOHash RSOGetHash(const char* symbolname);
+u32 RSOGetHash(const char* symbolname);
 
 int RSOGetNumImportSymbols(const RSOSymbolHeader* imp);
 int RSOGetNumImportSymbolsUnresolved(const RSOObjectHeader* rso);

@@ -495,12 +495,16 @@ void OSExitThread(void* val) {
     OSRestoreInterrupts(enabled);
 }
 
+#define SDK_IPL
+
 void OSCancelThread(OSThread* thread) {
     BOOL enabled = OSDisableInterrupts();
 
     ASSERTMSGLINE(1031, __OSIsThreadActive(thread) != 0, "OSExitThread(): thread %p is not active.", thread);
 
+#ifndef SDK_IPL
     __OSCancelInternalAlarms(thread);
+#endif
 
     switch (thread->state) {
         case OS_THREAD_STATE_READY: {
@@ -545,7 +549,7 @@ BOOL OSJoinThread(OSThread* thread, void** val) {
 
     ASSERTMSGLINE(1110, __OSIsThreadActive(thread) != 0, "OSJoinThread(): thread %p is not active.", thread);
 
-    if (!(thread->attr & 1) && thread->state != OS_THREAD_STATE_MORIBUND && thread->queueJoin.head == NULL) {
+    if (!(thread->attr & OS_THREAD_ATTR_DETACH) && thread->state != OS_THREAD_STATE_MORIBUND && thread->queueJoin.head == NULL) {
         OSSleepThread(&thread->queueJoin);
         if (__OSIsThreadActive(thread) == 0) {
             OSRestoreInterrupts(enabled);
@@ -889,8 +893,11 @@ void* OSGetThreadSpecific(s32 index) {
 
 void SleepAlarmHandler(OSAlarm* alarm, OSContext* context) {
 #pragma unused(context)
+#ifndef SDK_IPL
     OSThread* thread = (OSThread*)OSGetAlarmUserData(alarm);
-    if (__OSIsThreadActive(thread)) {
+    if (__OSIsThreadActive(thread))
+#endif
+    {
         OSResumeThread((OSThread*)OSGetAlarmUserData(alarm));
     }
 }
@@ -906,7 +913,12 @@ void OSSleepTicks(OSTime ticks) {
         OSRestoreInterrupts(enabled);
     } else {
         OSCreateAlarm(&alarm);
+#ifndef SDK_IPL
         __OSSetInternalAlarmUserData(&alarm, thread);
+#else
+        OSSetAlarmTag(&alarm, (u32)thread);
+        OSSetAlarmUserData(&alarm, thread);
+#endif
         OSSetAlarm(&alarm, ticks, SleepAlarmHandler);
         OSSuspendThread(thread);
         OSCancelAlarm(&alarm);

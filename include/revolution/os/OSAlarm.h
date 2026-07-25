@@ -39,6 +39,7 @@ void OSSetAlarmTag(OSAlarm* alarm, u32 tag);
 
 void OSCancelAlarms(u32 tag);
 
+void OSSetAlarmUserData(OSAlarm* alarm, void* userData);
 void* OSGetAlarmUserData(OSAlarm* tag);
 
 #ifdef __cplusplus

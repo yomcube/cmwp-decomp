@@ -33,13 +33,41 @@ void* OSCachedToUncached(void* caddr);
 void* OSUncachedToCached(void* ucaddr);
 
 #ifndef DEBUG
-#define OSPhysicalToCached(paddr) ((void*)((u32)(OS_BASE_CACHED + (u32)(paddr))))
-#define OSPhysicalToUncached(paddr) ((void*)((u32)(OS_BASE_UNCACHED + (u32)(paddr))))
-#define OSCachedToPhysical(caddr) ((u32)((u32)(caddr) - OS_BASE_CACHED))
-#define OSUncachedToPhysical(ucaddr) ((u32)((u32)(ucaddr) - OS_BASE_UNCACHED))
+#define OSPhysicalToCached(paddr) ((void*)((u32)(paddr) + OS_BASE_CACHED))
+#define OSPhysicalToUncached(paddr) ((void*)((u32)(paddr) + OS_BASE_UNCACHED))
+#define OSCachedToPhysical(caddr) ((u32)((u8*)(caddr) - OS_BASE_CACHED))
+#define OSUncachedToPhysical(ucaddr) ((u32)((u8*)(ucaddr) - OS_BASE_UNCACHED))
 #define OSCachedToUncached(caddr) ((void*)((u8*)(caddr) + (OS_BASE_UNCACHED - OS_BASE_CACHED)))
 #define OSUncachedToCached(ucaddr) ((void*)((u8*)(ucaddr) - (OS_BASE_UNCACHED - OS_BASE_CACHED)))
 #endif
+
+/****************/
+/* CONSOLE TYPE */
+/****************/
+
+#define OS_CONSOLE_MASK (0xF000 << 16)
+#define OS_CONSOLE_MASK_RVL (0x0000 << 16)
+#define OS_CONSOLE_MASK_DEV (0x1000 << 16)
+#define OS_CONSOLE_MASK_TDEV (0x2000 << 16)
+
+#define OS_CONSOLE_RVL_PP_0 (OS_CONSOLE_MASK_RVL + 0x0010)
+#define OS_CONSOLE_RVL_PP_1 (OS_CONSOLE_MASK_RVL + 0x0011)
+#define OS_CONSOLE_RVL_PP_2_1 (OS_CONSOLE_MASK_RVL + 0x0012)
+#define OS_CONSOLE_RVL_PP_2_2 (OS_CONSOLE_MASK_RVL + 0x0020)
+#define OS_CONSOLE_RETAIL (OS_CONSOLE_MASK_RVL + 0x0021)
+#define OS_CONSOLE_RETAIL_RVA (OS_CONSOLE_MASK_RVL + 0x0100)
+
+#define OS_CONSOLE_UNK (OS_CONSOLE_MASK_DEV + 0x0002)
+#define OS_CONSOLE_RVL_EMU (OS_CONSOLE_MASK_DEV + 0x0008)
+#define OS_CONSOLE_NDEV_1_0 (OS_CONSOLE_MASK_DEV + 0x0010)
+#define OS_CONSOLE_NDEV_1_1 (OS_CONSOLE_MASK_DEV + 0x0011)
+#define OS_CONSOLE_NDEV_1_2 (OS_CONSOLE_MASK_DEV + 0x0012)
+#define OS_CONSOLE_NDEV_2_0 (OS_CONSOLE_MASK_DEV + 0x0020)
+#define OS_CONSOLE_NDEV_2_1 (OS_CONSOLE_MASK_DEV + 0x0021)
+
+#define OS_CONSOLE_TDEV_EMU (OS_CONSOLE_MASK_TDEV + 0x0000)
+
+u32 OSGetConsoleType();
 
 /********************/
 /* TICKS CONVERSION */

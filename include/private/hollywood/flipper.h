@@ -24,4 +24,12 @@ vu32 __AIRegs[8] AT_ADDRESS(AI_REGISTER_ADDR);
 vu32 __ACRRegs[256] AT_ADDRESS(ACR_REGISTER_ADDR);
 vu32 __ACRIOPRegs[256] AT_ADDRESS(ACR_IOP_REGISTER_ADDR);
 
+inline u32 ACRReadReg(u32 reg) {
+    return __ACRRegs[reg >> 2];
+}
+
+inline void ACRWriteReg(u32 reg, u32 val) {
+    __ACRRegs[reg >> 2] = val;
+}
+
 #endif  // PRIVATE_HOLLYWOOD_FLIPPER_H

@@ -48,7 +48,7 @@ static void SetTimer(OSAlarm* alarm) {
     } else if (delta < 0x80000000) {
         PPCMtdec((u32)delta);
     } else {
-        PPCMtdec(0x7fffffff);
+        PPCMtdec(0x7FFFFFFF);
     }
 }
 
@@ -239,15 +239,19 @@ static asm void DecrementerExceptionHandler(register __OSException exception, re
     OS_EXCEPTION_SAVE_GPRS(context)
     stwu r1, -8(r1)
     b DecrementerExceptionCallback
-    // clang-format off
-#endif // __MWERKS__
+    // clang-format on
+#endif  // __MWERKS__
 }
 
 void OSSetAlarmTag(OSAlarm* alarm, u32 tag) {
-    ASSERTMSGLINE(599, tag != -1, "OSCancelAlarms(): invalid tag. (this tag is used by the operating system.)"); // @typo Copy and paste, so function name is incorrect.
+    ASSERTMSGLINE(
+        599, tag != -1,
+        "OSCancelAlarms(): invalid tag. (this tag is used by the operating system.)");  // @typo Copy and paste, so function name is incorrect.
+#ifndef SDK_IPL
     if (tag == -1) {
         return;
     }
+#endif
     alarm->tag = tag;
 }
 
@@ -318,7 +322,7 @@ void __OSCancelInternalAlarms(OSThread* thread) {
     enabled = OSDisableInterrupts();
     ASSERTLINE(723, OSCheckAlarmQueue());
 
-    for (alarm = AlarmQueue.head, next = (alarm) ? alarm->next : NULL; alarm != 0; alarm = next, next = alarm ? alarm->next : NULL) {
+    for (alarm = AlarmQueue.head, next = alarm ? alarm->next : NULL; alarm != 0; alarm = next, next = alarm ? alarm->next : NULL) {
         if (alarm->tag == -1 && alarm->userData == thread) {
             OSCancelAlarm(alarm);
         }

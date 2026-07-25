@@ -1,6 +1,6 @@
 #include <NMWException.h>
 #include <decomp.h>
-#pragma sym on
+
 #define MAX_ATEXIT_FUNCS 0x40
 
 DestructorChain* __global_destructor_chain;

@@ -238,7 +238,7 @@ cflags_base_debug = [
     *cflags_base_all,
     "-opt off",
     "-inline off",
-    "-g",
+    # "-g",
     "-DDEBUG",
 ]
 
@@ -1069,10 +1069,10 @@ config.libs = [
     ]),
 
     RVLSDKLib("ipc", [
-        Object(NonMatching, "RVL_SDK/ipc/ipcMain.c"),
-        Object(NonMatching, "RVL_SDK/ipc/ipcclt.c"),
-        Object(NonMatching, "RVL_SDK/ipc/memory.c"),
-        Object(NonMatching, "RVL_SDK/ipc/ipcProfile.c")
+        Object(Matching,    "RVL_SDK/ipc/ipcMain.c"),
+        Object(Matching,    "RVL_SDK/ipc/ipcclt.c"),
+        Object(Matching,    "RVL_SDK/ipc/memory.c"),
+        Object(Matching,    "RVL_SDK/ipc/ipcProfile.c")
     ]),
 
     RVLSDKLib("kbd", [
@@ -1163,7 +1163,7 @@ config.libs = [
         Object(Matching,    "RVL_SDK/os/OSTime.c"),
         Object(Matching,    "RVL_SDK/os/OSTimer.c"),
         Object(Matching,    "RVL_SDK/os/OSUtf.c"),
-        Object(NonMatching, "RVL_SDK/os/OSIpc.c"),
+        Object(Matching,    "RVL_SDK/os/OSIpc.c"),
         Object(NonMatching, "RVL_SDK/os/OSStateTM.c"),
         Object(Matching,    "RVL_SDK/os/time.dolphin.c", extra_cflags=["-O4,p"]),
         Object(Matching,    "RVL_SDK/os/init/__start.c"),

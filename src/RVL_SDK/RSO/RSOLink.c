@@ -169,6 +169,7 @@ static int cnvFarCode(RSOObjectHeader* rso, RSOImportTable* impTab, int impIndex
 static int cnvJumpCode(RSOObjectHeader* rso, RSOImportTable* impTab, int impIndex, u32 addr, u32* i_buff);
 
 #pragma dont_inline on
+#if SDK_VERSION > 20090224 && !defined(SDK_IPL)
 void RSONotifyModuleLoaded(RSOObjectHeader* moduleHeader) {
 }
 
@@ -186,6 +187,12 @@ void RSONotifyPreRSOLinkFar(RSOObjectHeader* impHeader, const RSOObjectHeader* e
 
 void RSONotifyPostRSOLinkFar(RSOObjectHeader* impHeader, const RSOObjectHeader* expHeader, void* buff) {
 }
+#else
+void RSONotifyLink(RSOObjectHeader* moduleHeader) {
+}
+void RSONotifyUnlink(RSOObjectHeader* moduleHeader) {
+}
+#endif
 #pragma dont_inline reset
 
 static BOOL LocateObject(void* newModule, void* bss, RSOFixedLevel i_fixed_level) {
@@ -253,7 +260,11 @@ static BOOL LocateObject(void* newModule, void* bss, RSOFixedLevel i_fixed_level
     if (i_fixed_level <= RSO_FL_INTERNAL) {
         memset(bss, 0, moduleHeader->bssSize);
     }
+#if SDK_VERSION > 20090224 && !defined(SDK_IPL)
     RSONotifyModuleLoaded(moduleHeader);
+#else
+    RSONotifyLink(moduleHeader);
+#endif
     return TRUE;
 }
 
@@ -373,7 +384,9 @@ BOOL RSOUnLocateObject(void* oldModule) {
     RSORel* intRel;
     RSOSectionInfo* si;
 
+#if SDK_VERSION > 20090224 && !defined(SDK_IPL)
     RSONotifyModuleUnloaded(moduleHeader);
+#endif
 
     a_max = moduleHeader->externalRelSize / sizeof(RSORel);
     for (i = 0; i < a_max; i++) {
@@ -417,6 +430,10 @@ BOOL RSOUnLocateObject(void* oldModule) {
     moduleHeader->impHeader.tableOffset -= (u32)moduleHeader;
     moduleHeader->impHeader.stringOffset -= (u32)moduleHeader;
 
+#if SDK_VERSION < 20090224 || defined(SDK_IPL)
+    RSONotifyUnlink(moduleHeader);
+#endif
+
     return TRUE;
 }
 
@@ -437,7 +454,9 @@ int RSOLink(RSOObjectHeader* rsoImp, const RSOObjectHeader* rsoExp) {
     int s_max = RSOGetNumImportSymbols(imp);
     RSOImportTable* impTab = (RSOImportTable*)imp->tableOffset;
 
+#if SDK_VERSION > 20090224 && !defined(SDK_IPL)
     RSONotifyPreRSOLink(rsoImp, rsoExp);
+#endif
 
     for (i = 0; i < s_max; i++, impTab++) {
         impName = (char*)impTab->strOffset + imp->stringOffset;
@@ -450,7 +469,9 @@ int RSOLink(RSOObjectHeader* rsoImp, const RSOObjectHeader* rsoExp) {
             }
         }
     }
+#if SDK_VERSION > 20090224 && !defined(SDK_IPL)
     RSONotifyPostRSOLink(rsoImp, rsoExp);
+#endif
     return count;
 }
 
@@ -461,7 +482,9 @@ void RSOUnLink(RSOObjectHeader* rsoImp, const RSOObjectHeader* rsoExp) {
     const u32* addr;
     int s_max = RSOGetNumImportSymbols(imp);
 
+#if SDK_VERSION > 20090224 && !defined(SDK_IPL)
     RSONotifyPreRSOLink(rsoImp, rsoExp);
+#endif
 
     for (i = 0; i < s_max; i++) {
         impName = RSOGetImportSymbolName(imp, i);
@@ -472,7 +495,9 @@ void RSOUnLink(RSOObjectHeader* rsoImp, const RSOObjectHeader* rsoExp) {
             }
         }
     }
+#if SDK_VERSION > 20090224 && !defined(SDK_IPL)
     RSONotifyPostRSOLink(rsoImp, rsoExp);
+#endif
 }
 
 RSOHash RSOGetHash(const char* symbolname) {
@@ -715,9 +740,11 @@ static void RSORelocate(RSORel* rel, int index, u32 offset) {
             *p = (*p & ~0x03FFFFFC) | (x & 0x03FFFFFC);
             x = offset + rel->addend;
             y = ((u32)p & ~0x03FFFFFC) | ((((u32)p & 0x03FFFFFC) + (*p & 0x03FFFFFC)) & 0x03FFFFFC);
+#if SDK_VERSION > 20090224 && !defined(SDK_IPL)
             if (((u32)x != 0) && (x != y)) {
                 *p = (u32)((*p & ~0x03FFFFFC) | 0x03FF0000 | 0xFFFC);
             }
+#endif
             break;
         }
         case R_PPC_REL14:
@@ -1057,7 +1084,9 @@ int RSOLinkFar(RSOObjectHeader* i_rsoImp, const RSOObjectHeader* i_rsoExp, void*
     u32* r_buff = (u32*)i_buff;
     int ret;
 
+#if SDK_VERSION > 20090224 && !defined(SDK_IPL)
     RSONotifyPreRSOLinkFar(i_rsoImp, i_rsoExp, i_buff);
+#endif
 
     for (i = 0; i < s_max; i++, impTab++) {
         impName = (char*)impTab->strOffset + imp->stringOffset;
@@ -1081,7 +1110,9 @@ int RSOLinkFar(RSOObjectHeader* i_rsoImp, const RSOObjectHeader* i_rsoExp, void*
     }
     DCFlushRange(i_buff, count * RSO_FAR_JUMP_SIZE);
     ICInvalidateRange(i_buff, count * RSO_FAR_JUMP_SIZE);
+#if SDK_VERSION > 20090224 && !defined(SDK_IPL)
     RSONotifyPostRSOLinkFar(i_rsoImp, i_rsoExp, i_buff);
+#endif
     return count;
 }
 
@@ -1117,7 +1148,9 @@ int RSOLinkJump(RSOObjectHeader* i_rsoImp, const RSOObjectHeader* i_rsoExp, void
     u32* r_buff;
     int ret;
 
+#if SDK_VERSION > 20090224 && !defined(SDK_IPL)
     RSONotifyPreRSOLinkFar(i_rsoImp, i_rsoExp, i_buff);
+#endif
 
     for (i = 0; i < s_max; i++, impTab++) {
         impName = (char*)impTab->strOffset + imp->stringOffset;
@@ -1139,6 +1172,8 @@ int RSOLinkJump(RSOObjectHeader* i_rsoImp, const RSOObjectHeader* i_rsoExp, void
             }
         }
     }
+#if SDK_VERSION > 20090224 && !defined(SDK_IPL)
     RSONotifyPostRSOLinkFar(i_rsoImp, i_rsoExp, i_buff);
+#endif
     return count;
 }
