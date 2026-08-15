@@ -33,7 +33,7 @@ typedef struct {
 } __ios_Response;
 
 static s32 __mailboxAck = 1;
-static IOSHeapId hid = -1;
+static IOSHeapId hid = IOS_INVALID_HEAP;
 
 static BOOL __relnchFl = FALSE;
 static __ios_rpc* __relnchRpc = NULL;

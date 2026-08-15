@@ -90,7 +90,7 @@ void IPCiProfInit() {
     for (i = 0; i < IPC_MAX_REQUEST; i++) {
         IpcReqPtrArray[i] = NULL;
 #if SDK_VERSION < 20091211
-        IpcFdArray[i] = -1;
+        IpcFdArray[i] = IOS_INVALID_FD;
 #else
         IpcStartTimeArray[i] = 0;
 #endif
@@ -158,7 +158,7 @@ static void AddReqInfo(IOSResourceRequest* request, IOSFd fd)
             break;
         }
 #else
-        if (IpcReqPtrArray[i] == NULL && IpcFdArray[i] == -1) {
+        if (IpcReqPtrArray[i] == NULL && IpcFdArray[i] == IOS_INVALID_FD) {
             IpcReqPtrArray[i] = request;
             IpcFdArray[i] = fd;
             break;
@@ -202,7 +202,7 @@ static void DelReqInfo(IOSResourceRequest* request, IOSFd fd)
 #else
         if (request == IpcReqPtrArray[i] && IpcFdArray[i] == fd) {
             IpcReqPtrArray[i] = NULL;
-            IpcFdArray[i] = -1;
+            IpcFdArray[i] = IOS_INVALID_FD;
             return;
         }
 #endif

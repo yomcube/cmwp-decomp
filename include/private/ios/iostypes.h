@@ -32,7 +32,6 @@
 #define IOS_ERROR_FAIL_INTERNAL -21
 #define IOS_ERROR_FAIL_ALLOC -22
 #define IOS_ERROR_INVALID_SIZE -23
-
 #define IOS_ERROR_HW_RESET -24
 
 #define IOS_SEEK_SET 0
@@ -47,6 +46,9 @@
 #define IOS_IOCTL 6
 #define IOS_IOCTLV 7
 #define IOS_REPLY 8
+
+#define IOS_INVALID_FD -1
+#define IOS_INVALID_HEAP -1
 
 typedef s32 IOSError;
 

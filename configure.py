@@ -1013,7 +1013,7 @@ config.libs = [
     ]),
 
     RVLSDKLib("esp", [
-        Object(NonMatching, "RVL_SDK/esp/esp.c")
+        Object(Matching,    "RVL_SDK/esp/esp.c")
     ]),
 
     RVLSDKLib("euart", [
