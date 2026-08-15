@@ -1,4 +1,4 @@
-#include <private/ipc.h>
+#include <revolution/ipc.h>
 
 #include <revolution/os.h>
 

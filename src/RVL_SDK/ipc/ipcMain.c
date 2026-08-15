@@ -1,4 +1,4 @@
-#include <private/ipc.h>
+#include <revolution/ipc.h>
 
 #include <private/hollywood.h>
 #include <private/os.h>

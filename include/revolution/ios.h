@@ -1,7 +1,7 @@
 #ifndef PRIVATE_IOS_H
 #define PRIVATE_IOS_H
 
-#include <private/ios/iostypes.h>
+#include <revolution/ios/iostypes.h>
 
 #define IOS_MAX_PATH 64
 

@@ -1,7 +1,7 @@
 #ifndef PRIVATE_ESP_H
 #define PRIVATE_ESP_H
 
-#include <private/es/estypes.h>
+#include <revolution/es/estypes.h>
 
 /**
  * https://wiibrew.org/wiki//dev/es

@@ -1,6 +1,6 @@
-#include <private/esp.h>
+#include <revolution/esp.h>
 
-#include <private/ios.h>
+#include <revolution/ios.h>
 
 #include <stddef.h>
 

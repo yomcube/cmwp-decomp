@@ -4,7 +4,7 @@
 #include <revolution/os/OSTime.h>
 #include <revolution/types.h>
 
-#include <private/ios/iostypes.h>
+#include <revolution/ios/iostypes.h>
 
 #if SDK_VERSION >= 20091211
 #define IPC_MAX_REQUEST 96

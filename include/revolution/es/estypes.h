@@ -3,7 +3,7 @@
 
 #include <revolution/types.h>
 
-#include <private/ios/iosctypes.h>
+#include <revolution/ios/iosctypes.h>
 
 /**
  * https://wiibrew.org/wiki/Title_metadata

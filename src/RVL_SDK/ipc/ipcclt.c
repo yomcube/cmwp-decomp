@@ -1,5 +1,5 @@
-#include <private/ios.h>
-#include <private/ipc.h>
+#include <revolution/ios.h>
+#include <revolution/ipc.h>
 
 #include <private/hollywood.h>
 
