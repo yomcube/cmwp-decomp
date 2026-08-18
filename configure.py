@@ -1028,7 +1028,7 @@ config.libs = [
     ]),
 
     RVLSDKLib("fs", [
-        Object(NonMatching, "RVL_SDK/fs/fs.c")
+        Object(Matching,    "RVL_SDK/fs/fs.c")
     ]),
 
     RVLSDKLib("gx", [

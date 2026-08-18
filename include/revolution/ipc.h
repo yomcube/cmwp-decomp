@@ -1,5 +1,5 @@
-#ifndef PRIVATE_IPC_H
-#define PRIVATE_IPC_H
+#ifndef REVOLUTION_IPC_H
+#define REVOLUTION_IPC_H
 
 #include <revolution/os/OSTime.h>
 #include <revolution/types.h>
@@ -48,4 +48,4 @@ void IPCiProfAck();
 
 void IPCiProfReply(IOSResourceRequest* request, IOSFd fd);
 
-#endif  // PRIVATE_IPC_H
+#endif  // REVOLUTION_IPC_H

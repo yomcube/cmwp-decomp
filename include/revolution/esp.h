@@ -1,5 +1,5 @@
-#ifndef PRIVATE_ESP_H
-#define PRIVATE_ESP_H
+#ifndef REVOLUTION_ESP_H
+#define REVOLUTION_ESP_H
 
 #include <revolution/es/estypes.h>
 
@@ -67,4 +67,4 @@ ESError ESP_ExportTitleDone();
 
 ESError ESP_GetTicket(ESTicketView* ticketView, ESTicket* ticket);
 
-#endif  // PRIVATE_ESP_H
+#endif  // REVOLUTION_ESP_H

@@ -1,5 +1,5 @@
-#ifndef PRIVATE_IOS_CRYPTO_TYPES_H
-#define PRIVATE_IOS_CRYPTO_TYPES_H
+#ifndef REVOLUTION_IOS_CRYPTO_TYPES_H
+#define REVOLUTION_IOS_CRYPTO_TYPES_H
 
 #include <revolution/types.h>
 
@@ -40,4 +40,4 @@ typedef struct {
     IOSCName issuer;          // 0x140
 } IOSCSigRsa2048;
 
-#endif  // PRIVATE_IOS_CRYPTO_TYPES_H
+#endif  // REVOLUTION_IOS_CRYPTO_TYPES_H

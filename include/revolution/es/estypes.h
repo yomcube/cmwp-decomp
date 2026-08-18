@@ -1,5 +1,5 @@
-#ifndef PRIVATE_ES_TYPES_H
-#define PRIVATE_ES_TYPES_H
+#ifndef REVOLUTION_ES_TYPES_H
+#define REVOLUTION_ES_TYPES_H
 
 #include <revolution/types.h>
 
@@ -232,4 +232,4 @@ typedef struct {
 
 #define ES_TITLE_ID(type, code) ((ESTitleId)((ESTitleId)type << 32 | code))
 
-#endif  // PRIVATE_ES_TYPES_H
+#endif  // REVOLUTION_ES_TYPES_H

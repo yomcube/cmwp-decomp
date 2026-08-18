@@ -16,7 +16,9 @@ extern "C" {
 /* UNCACHED/CACHED MEMORY */
 /**************************/
 
-#define OSRoundUp32B(x) ROUNDUP(x, 32)
+#define OSRoundUp32B(x) ROUNDUP(x, DEFAULT_ALIGN)
+#define OSRoundDown32B(x) ROUNDDOWN(x, DEFAULT_ALIGN)
+#define OSIsAligned32B(x) IS_ALIGNED(x, DEFAULT_ALIGN)
 
 #define OS_CACHED_REGION_PREFIX 0x8000
 #define OS_UNCACHED_REGION_PREFIX 0xC000

@@ -1,5 +1,5 @@
-#ifndef PRIVATE_IOS_H
-#define PRIVATE_IOS_H
+#ifndef REVOLUTION_IOS_H
+#define REVOLUTION_IOS_H
 
 #include <revolution/ios/iostypes.h>
 
@@ -47,4 +47,4 @@ IOSError IOS_IoctlvAsync(IOSFd fd, u32 cmd, u32 readCount, u32 writeCount, IOSIo
 IOSError IOS_Ioctlv(IOSFd fd, u32 cmd, u32 readCount, u32 writeCount, IOSIoVector* vector);
 IOSError IOS_IoctlvReboot(IOSFd fd, u32 cmd, u32 readCount, u32 writeCount, IOSIoVector* vector);
 
-#endif  // PRIVATE_IOS_H
+#endif  // REVOLUTION_IOS_H

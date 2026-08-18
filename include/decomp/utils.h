@@ -14,6 +14,8 @@
 #define ROUNDDOWN(x, a) (((x)) & ~((a) - 1))
 #define PTR_ROUNDDOWN(x, a) ((void*)ROUNDDOWN((unsigned long)x, a))
 
+#define IS_ALIGNED(x, a) (((unsigned long)(x) % a) == 0)
+
 #define MEM_CLEAR(x) __memclr((x), sizeof(*(x)))
 
 #ifdef __MWERKS__

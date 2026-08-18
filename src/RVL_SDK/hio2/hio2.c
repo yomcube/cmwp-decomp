@@ -11,8 +11,6 @@ static const char* __HIO2Version = "<< RVL_SDK - HIO2 	release build: Jul 30 200
 #include <revolution/exi.h>
 #include <revolution/os.h>
 
-/* HIO2Handle is pretty much the same as HIO2DeviceType, which is also the same as EXI channels. */
-
 HIO2Error __HIO2LastErrorCode = HIO2_ERR_OK;
 BOOL __HIO2Initialized = FALSE;
 
@@ -54,9 +52,9 @@ static void __HIO2ExtHandler(HIO2Handle handle, OSContext* context) {
     EXISetExiCallback(handle, NULL);
 }
 
-static void __HIO2ExiHandler(HIO2DeviceType handle, OSContext* context) {
-    if (handle == HIO2_DEVICE_2) {
-        handle = HIO2_DEVICE_0;
+static void __HIO2ExiHandler(s32 handle, OSContext* context) {
+    if (handle == HIO2_DEVICE_MrEXI) {
+        handle = HIO2_DEVICE_EXI2USB_0;
     }
     if (__HIO2Control[handle].receiveCallback != NULL) {
         __HIO2Control[handle].receiveCallback(handle);
@@ -116,7 +114,7 @@ BOOL HIO2EnumDevices(HIODeviceTypeCallback callback) {
         }
     }
     if ((__HIO2ConsoleType & 1) != 0) {
-        callback(HIO2_DEVICE_2);
+        callback(HIO2_DEVICE_MrEXI);
     }
     return TRUE;
 }
@@ -136,13 +134,13 @@ HIO2Handle HIO2Open(HIO2DeviceType type, HIOHandleCallback receiveCallback, HIOH
         return HIO2_INVALID_HANDLE_VALUE;
     }
     switch (type) {
-        case HIO2_DEVICE_0:
-        case HIO2_DEVICE_1: {
+        case HIO2_DEVICE_EXI2USB_0:
+        case HIO2_DEVICE_EXI2USB_1: {
             handle = (HIO2Handle)type;
             dev = 0;
             break;
         }
-        case HIO2_DEVICE_2: {
+        case HIO2_DEVICE_MrEXI: {
             if ((__HIO2ConsoleType & 1) != 0) {
                 handle = HIO2_HANDLE_0;
                 dev = 1;
@@ -191,8 +189,8 @@ HIO2Handle HIO2Open(HIO2DeviceType type, HIOHandleCallback receiveCallback, HIOH
         __HIO2Control[handle].readCallback = NULL;
         __HIO2Control[handle].disconnectCallback = disconnectCallback;
         if (receiveCallback != NULL) {
-            if (type == HIO2_DEVICE_2) {
-                EXISetExiCallback(HIO2_DEVICE_2, __HIO2ExiHandler);
+            if (type == HIO2_DEVICE_MrEXI) {
+                EXISetExiCallback(HIO2_DEVICE_MrEXI, __HIO2ExiHandler);
             } else {
                 EXISetExiCallback(handle, __HIO2ExiHandler);
             }
@@ -206,7 +204,7 @@ s32 HIO2GetDeviceType(HIO2Handle handle) {
     if (IS_BAD_HANDLE(handle)) {
         return HIO2_DEVICE_INVALID;
     } else {
-        return __HIO2Control[handle].dev == 0 ? __HIO2Control[handle].handle : HIO2_DEVICE_2;
+        return __HIO2Control[handle].dev == 0 ? __HIO2Control[handle].handle : HIO2_DEVICE_MrEXI;
     }
 }
 

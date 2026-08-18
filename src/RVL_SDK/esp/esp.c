@@ -1,6 +1,7 @@
 #include <revolution/esp.h>
 
 #include <revolution/ios.h>
+#include <revolution/os.h>
 
 #include <stddef.h>
 
@@ -17,59 +18,56 @@ IOSFd __esFd = IOS_INVALID_FD;
 
 #define ES_VECTOR_ADDR ((IOSIoVector*)ES_WORK_AT(0xD0))
 
-#define IS_ALIGNED(x) (((u32)(x) & 31) == 0)
-#define IS_ALIGNED64(x) (((u32)(x) & 63) == 0)
-
 enum {
-    ES_IOCTLV_IMPORT_TICKET = 1,
-    ES_IOCTLV_IMPORT_TITLE_INIT = 2,
-    ES_IOCTLV_IMPORT_CONTENT_BEGIN = 3,
-    ES_IOCTLV_IMPORT_CONTENT_DATA = 4,
-    ES_IOCTLV_IMPORT_CONTENT_END = 5,
-    ES_IOCTLV_IMPORT_TITLE_DONE = 6,
-    ES_IOCTLV_GET_DEVICE_ID = 7,
-    ES_IOCTLV_LAUNCH_TITLE = 8,
-    ES_IOCTLV_OPEN_CONTENT = 9,
-    ES_IOCTLV_READ_CONTENT = 10,
-    ES_IOCTLV_CLOSE_CONTENT = 11,
-    ES_IOCTLV_LIST_OWNED_TITLES = 12,
-    ES_IOCTLV_LIST_OWNED_TITLES_WITH_COUNT = 13,
-    ES_IOCTLV_LIST_TITLES_ON_CARD = 14,
-    ES_IOCTLV_LIST_TITLES_ON_CARD_WITH_COUNT = 15,
-    ES_IOCTLV_LIST_TITLE_CONTENTS_ON_CARD = 16,
-    ES_IOCTLV_LIST_TITLE_CONTENTS_ON_CARD_WITH_COUNT = 17,
-    ES_IOCTLV_GET_TICKET_VIEWS = 18,
-    ES_IOCTLV_GET_TICKET_VIEWS_WITH_COUNT = 19,
-    ES_IOCTLV_GET_TMDVIEW = 20,
-    ES_IOCTLV_GET_TMDVIEW_WITH_SIZE = 21,
-    ES_IOCTLV_GET_CONSUMPTION = 22,
-    ES_IOCTLV_DELETE_TICKET = 24,
-    ES_IOCTLV_GET_DATA_DIR = 29,
-    ES_IOCTLV_GET_DVD_TICKET_VIEW = 27,
-    ES_IOCTLV_GET_DEVICE_CERT = 30,
-    ES_IOCTLV_GET_TITLE_ID = 32,
-    ES_IOCTLV_DELETE_TITLE_CONTENT = 34,
-    ES_IOCTLV_SEEK_CONTENT = 35,
-    ES_IOCTLV_OPEN_TITLE_CONTENT_FILE = 36,
-    ES_IOCTLV_EXPORT_TITLE_INIT = 38,
-    ES_IOCTLV_EXPORT_CONTENT_BEGIN = 39,
-    ES_IOCTLV_EXPORT_CONTENT_DATA = 40,
-    ES_IOCTLV_EXPORT_CONTENT_END = 41,
-    ES_IOCTLV_EXPORT_TITLE_DONE = 42,
-    ES_IOCTLV_IMPORT_TITLE_INIT_ALT = 43,
-    ES_IOCTLV_ENCRYPT = 44,
-    ES_IOCTLV_DECRYPT = 45,
-    ES_IOCTLV_IMPORT_TITLE_CANCEL = 47,
-    ES_IOCTLV_SIGN = 48,
-    ES_IOCTLV_VERIFY_SIGN = 49,
-    ES_IOCTLV_LIST_TMD_CONTENTS_ON_CARD = 50,
-    ES_IOCTLV_LIST_TMD_CONTENTS_ON_CARD_WITH_COUNT = 51,
-    ES_IOCTLV_GET_TMD = 52,
-    ES_IOCTLV_GET_TMD_WITH_SIZE = 53,
-    ES_IOCTLV_GET_DVD_TMD = 57,
-    ES_IOCTLV_GET_DVD_TMD_WITH_SIZE = 58,
-    ES_IOCTLV_DELETE_CONTENT = 62,
-    ES_IOCTLV_GET_TICKET = 64,
+    ES_IOCTL_IMPORT_TICKET = 1,
+    ES_IOCTL_IMPORT_TITLE_INIT = 2,
+    ES_IOCTL_IMPORT_CONTENT_BEGIN = 3,
+    ES_IOCTL_IMPORT_CONTENT_DATA = 4,
+    ES_IOCTL_IMPORT_CONTENT_END = 5,
+    ES_IOCTL_IMPORT_TITLE_DONE = 6,
+    ES_IOCTL_GET_DEVICE_ID = 7,
+    ES_IOCTL_LAUNCH_TITLE = 8,
+    ES_IOCTL_OPEN_CONTENT = 9,
+    ES_IOCTL_READ_CONTENT = 10,
+    ES_IOCTL_CLOSE_CONTENT = 11,
+    ES_IOCTL_LIST_OWNED_TITLES = 12,
+    ES_IOCTL_LIST_OWNED_TITLES_WITH_COUNT = 13,
+    ES_IOCTL_LIST_TITLES_ON_CARD = 14,
+    ES_IOCTL_LIST_TITLES_ON_CARD_WITH_COUNT = 15,
+    ES_IOCTL_LIST_TITLE_CONTENTS_ON_CARD = 16,
+    ES_IOCTL_LIST_TITLE_CONTENTS_ON_CARD_WITH_COUNT = 17,
+    ES_IOCTL_GET_TICKET_VIEWS = 18,
+    ES_IOCTL_GET_TICKET_VIEWS_WITH_COUNT = 19,
+    ES_IOCTL_GET_TMDVIEW = 20,
+    ES_IOCTL_GET_TMDVIEW_WITH_SIZE = 21,
+    ES_IOCTL_GET_CONSUMPTION = 22,
+    ES_IOCTL_DELETE_TICKET = 24,
+    ES_IOCTL_GET_DATA_DIR = 29,
+    ES_IOCTL_GET_DVD_TICKET_VIEW = 27,
+    ES_IOCTL_GET_DEVICE_CERT = 30,
+    ES_IOCTL_GET_TITLE_ID = 32,
+    ES_IOCTL_DELETE_TITLE_CONTENT = 34,
+    ES_IOCTL_SEEK_CONTENT = 35,
+    ES_IOCTL_OPEN_TITLE_CONTENT_FILE = 36,
+    ES_IOCTL_EXPORT_TITLE_INIT = 38,
+    ES_IOCTL_EXPORT_CONTENT_BEGIN = 39,
+    ES_IOCTL_EXPORT_CONTENT_DATA = 40,
+    ES_IOCTL_EXPORT_CONTENT_END = 41,
+    ES_IOCTL_EXPORT_TITLE_DONE = 42,
+    ES_IOCTL_IMPORT_TITLE_INIT_ALT = 43,
+    ES_IOCTL_ENCRYPT = 44,
+    ES_IOCTL_DECRYPT = 45,
+    ES_IOCTL_IMPORT_TITLE_CANCEL = 47,
+    ES_IOCTL_SIGN = 48,
+    ES_IOCTL_VERIFY_SIGN = 49,
+    ES_IOCTL_LIST_TMD_CONTENTS_ON_CARD = 50,
+    ES_IOCTL_LIST_TMD_CONTENTS_ON_CARD_WITH_COUNT = 51,
+    ES_IOCTL_GET_TMD = 52,
+    ES_IOCTL_GET_TMD_WITH_SIZE = 53,
+    ES_IOCTL_GET_DVD_TMD = 57,
+    ES_IOCTL_GET_DVD_TMD_WITH_SIZE = 58,
+    ES_IOCTL_DELETE_CONTENT = 62,
+    ES_IOCTL_GET_TICKET = 64,
 };
 
 ESError ESP_InitLib() {
@@ -120,7 +118,7 @@ ESError ESP_ImportTicket(const ESTicket* ticket, void* certs, u32 nCerts, void* 
         goto exit;
     }
 
-    if (!IS_ALIGNED(ticket) || !IS_ALIGNED(certs) || !IS_ALIGNED(crls)) {
+    if (!OSIsAligned32B(ticket) || !OSIsAligned32B(certs) || !OSIsAligned32B(crls)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -138,7 +136,7 @@ ESError ESP_ImportTicket(const ESTicket* ticket, void* certs, u32 nCerts, void* 
     vec[2].length = nCrls;
 
     if (unk == FALSE) {
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_IMPORT_TICKET, 3, 0, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_IMPORT_TICKET, 3, 0, vec);
         goto exit;
     }
 
@@ -159,7 +157,7 @@ ESError ESP_ImportTitleInit(ESTitleMeta* tmd, u32 tmdSize, void* certs, u32 nCer
 
     u32 gotTmdSize;
 
-    if (!IS_ALIGNED(tmd) || !IS_ALIGNED(certs) || !IS_ALIGNED(crls)) {
+    if (!OSIsAligned32B(tmd) || !OSIsAligned32B(certs) || !OSIsAligned32B(crls)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -186,7 +184,7 @@ ESError ESP_ImportTitleInit(ESTitleMeta* tmd, u32 tmdSize, void* certs, u32 nCer
             vec[3].base = (u8*)pUnknown;
             vec[3].length = sizeof(*pUnknown);
 
-            err = IOS_Ioctlv(__esFd, ES_IOCTLV_IMPORT_TITLE_INIT, 4, 0, vec);
+            err = IOS_Ioctlv(__esFd, ES_IOCTL_IMPORT_TITLE_INIT, 4, 0, vec);
             break;
         }
         case 2: {
@@ -204,7 +202,7 @@ ESError ESP_ImportTitleInit(ESTitleMeta* tmd, u32 tmdSize, void* certs, u32 nCer
             vec[0].base = (u8*)tmd;
             vec[0].length = tmdSize;
 
-            err = IOS_Ioctlv(__esFd, ES_IOCTLV_IMPORT_TITLE_INIT_ALT, 1, 0, vec);
+            err = IOS_Ioctlv(__esFd, ES_IOCTL_IMPORT_TITLE_INIT_ALT, 1, 0, vec);
             break;
         }
         case 1:
@@ -241,7 +239,7 @@ ESFd ESP_ImportContentBegin(ESTitleId titleId, ESContentId contentId) {
     vec[1].base = (u8*)pContentId;
     vec[1].length = sizeof(*pContentId);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_IMPORT_CONTENT_BEGIN, 2, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_IMPORT_CONTENT_BEGIN, 2, 0, vec);
 
 exit:
     return err;
@@ -261,7 +259,7 @@ ESError ESP_ImportContentData(ESFd fd, void* buf, u32 bufSize) {
         goto exit;
     }
 
-    if (!IS_ALIGNED(buf)) {
+    if (!OSIsAligned32B(buf)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -278,7 +276,7 @@ ESError ESP_ImportContentData(ESFd fd, void* buf, u32 bufSize) {
     vec[1].base = (u8*)buf;
     vec[1].length = bufSize;
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_IMPORT_CONTENT_DATA, 2, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_IMPORT_CONTENT_DATA, 2, 0, vec);
 
 exit:
     return err;
@@ -303,7 +301,7 @@ ESError ESP_ImportContentEnd(ESFd fd) {
     vec[0].base = (u8*)pFd;
     vec[0].length = sizeof(*pFd);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_IMPORT_CONTENT_END, 1, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_IMPORT_CONTENT_END, 1, 0, vec);
 
 exit:
     return err;
@@ -321,7 +319,7 @@ ESError ESP_ImportTitleDone() {
         goto exit;
     }
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_IMPORT_TITLE_DONE, 0, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_IMPORT_TITLE_DONE, 0, 0, vec);
 
 exit:
     return err;
@@ -339,7 +337,7 @@ ESError ESP_ImportTitleCancel() {
         goto exit;
     }
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_IMPORT_TITLE_CANCEL, 0, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_IMPORT_TITLE_CANCEL, 0, 0, vec);
 
 exit:
     return err;
@@ -359,7 +357,7 @@ ESError ESP_LaunchTitle(ESTitleId titleId, ESTicketView* ticket) {
         goto exit;
     }
 
-    if (!IS_ALIGNED(ticket)) {
+    if (!OSIsAligned32B(ticket)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -371,7 +369,7 @@ ESError ESP_LaunchTitle(ESTitleId titleId, ESTicketView* ticket) {
     vec[1].base = (u8*)ticket;
     vec[1].length = sizeof(*ticket);
 
-    err = IOS_IoctlvReboot(__esFd, ES_IOCTLV_LAUNCH_TITLE, 2, 0, vec);
+    err = IOS_IoctlvReboot(__esFd, ES_IOCTL_LAUNCH_TITLE, 2, 0, vec);
 
     __esFd = -1;
 
@@ -398,7 +396,7 @@ ESFd ESP_OpenContentFile(ESContentId contentId) {
     vec[0].base = (u8*)pContentId;
     vec[0].length = sizeof(*pContentId);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_OPEN_CONTENT, 1, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_OPEN_CONTENT, 1, 0, vec);
 
 exit:
     return err;
@@ -414,7 +412,7 @@ ESFd ESP_OpenTitleContentFile(ESTitleId titleId, ESTicketView* ticketView, ESCon
     ESTitleId* pTitleId = (ESTitleId*)ES_WORK_AT(0x00);
     ESContentId* pContentId = (ESContentId*)ES_WORK_AT(0x20);
 
-    if (__esFd < 0 || !IS_ALIGNED(ticketView)) {
+    if (__esFd < 0 || !OSIsAligned32B(ticketView)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -429,7 +427,7 @@ ESFd ESP_OpenTitleContentFile(ESTitleId titleId, ESTicketView* ticketView, ESCon
     vec[2].base = (u8*)pContentId;
     vec[2].length = sizeof(*pContentId);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_OPEN_TITLE_CONTENT_FILE, 3, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_OPEN_TITLE_CONTENT_FILE, 3, 0, vec);
 
 exit:
     return err;
@@ -449,7 +447,7 @@ ESError ESP_ReadContentFile(ESFd fd, void* buf, u32 bufSize) {
         goto exit;
     }
 
-    if (!IS_ALIGNED(buf)) {
+    if (!OSIsAligned32B(buf)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -461,7 +459,7 @@ ESError ESP_ReadContentFile(ESFd fd, void* buf, u32 bufSize) {
     vec[1].base = (u8*)buf;
     vec[1].length = bufSize;
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_READ_CONTENT, 1, 1, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_READ_CONTENT, 1, 1, vec);
 
 exit:
     return err;
@@ -494,7 +492,7 @@ ESError ESP_SeekContentFile(ESFd fd, s32 offset, u32 whence) {
     vec[2].base = (u8*)pWhence;
     vec[2].length = sizeof(*pWhence);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_SEEK_CONTENT, 3, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_SEEK_CONTENT, 3, 0, vec);
 
 exit:
     return err;
@@ -519,7 +517,7 @@ ESError ESP_CloseContentFile(ESFd fd) {
     vec[0].base = (u8*)pFd;
     vec[0].length = sizeof(*pFd);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_CLOSE_CONTENT, 1, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_CLOSE_CONTENT, 1, 0, vec);
 
 exit:
     return err;
@@ -539,7 +537,7 @@ ESError ESP_ListOwnedTitles(ESTitleId* titleIds, u32* numTitles) {
         goto exit;
     }
 
-    if (!IS_ALIGNED(titleIds)) {
+    if (!OSIsAligned32B(titleIds)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -548,7 +546,7 @@ ESError ESP_ListOwnedTitles(ESTitleId* titleIds, u32* numTitles) {
         vec[0].base = (u8*)pNumTitles;
         vec[0].length = sizeof(*pNumTitles);
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_LIST_OWNED_TITLES, 0, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_LIST_OWNED_TITLES, 0, 1, vec);
         if (err == IOS_ERROR_OK) {
             *numTitles = *pNumTitles;
         }
@@ -564,7 +562,7 @@ ESError ESP_ListOwnedTitles(ESTitleId* titleIds, u32* numTitles) {
         vec[1].base = (u8*)titleIds;
         vec[1].length = *numTitles * sizeof(*titleIds);
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_LIST_OWNED_TITLES_WITH_COUNT, 1, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_LIST_OWNED_TITLES_WITH_COUNT, 1, 1, vec);
         goto exit;
     }
 
@@ -586,7 +584,7 @@ ESError ESP_ListTitlesOnCard(ESTitleId* titleIds, u32* numTitles) {
         goto exit;
     }
 
-    if (!IS_ALIGNED(titleIds)) {
+    if (!OSIsAligned32B(titleIds)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -595,7 +593,7 @@ ESError ESP_ListTitlesOnCard(ESTitleId* titleIds, u32* numTitles) {
         vec[0].base = (u8*)pNumTitles;
         vec[0].length = sizeof(*pNumTitles);
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_LIST_TITLES_ON_CARD, 0, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_LIST_TITLES_ON_CARD, 0, 1, vec);
         if (err == IOS_ERROR_OK) {
             *numTitles = *pNumTitles;
         }
@@ -611,7 +609,7 @@ ESError ESP_ListTitlesOnCard(ESTitleId* titleIds, u32* numTitles) {
         vec[1].base = (u8*)titleIds;
         vec[1].length = *numTitles * sizeof(*titleIds);
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_LIST_TITLES_ON_CARD_WITH_COUNT, 1, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_LIST_TITLES_ON_CARD_WITH_COUNT, 1, 1, vec);
         goto exit;
     }
 
@@ -634,7 +632,7 @@ ESError ESP_ListTitleContentsOnCard(ESTitleId titleId, ESContentId* contentIds, 
         goto exit;
     }
 
-    if (!IS_ALIGNED(contentIds)) {
+    if (!OSIsAligned32B(contentIds)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -647,7 +645,7 @@ ESError ESP_ListTitleContentsOnCard(ESTitleId titleId, ESContentId* contentIds, 
         vec[1].base = (u8*)pNumContents;
         vec[1].length = sizeof(*pNumContents);
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_LIST_TITLE_CONTENTS_ON_CARD, 1, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_LIST_TITLE_CONTENTS_ON_CARD, 1, 1, vec);
         if (err == IOS_ERROR_OK) {
             *numContents = *pNumContents;
         }
@@ -665,7 +663,7 @@ ESError ESP_ListTitleContentsOnCard(ESTitleId titleId, ESContentId* contentIds, 
         vec[2].base = (u8*)contentIds;
         vec[2].length = *numContents * sizeof(*contentIds);
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_LIST_TITLE_CONTENTS_ON_CARD_WITH_COUNT, 2, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_LIST_TITLE_CONTENTS_ON_CARD_WITH_COUNT, 2, 1, vec);
         goto exit;
     }
 
@@ -687,7 +685,7 @@ ESError ESP_ListTmdContentsOnCard(ESTitleMeta* tmd, u32 tmdSize, ESContentId* co
         goto exit;
     }
 
-    if (!IS_ALIGNED(tmd) || !IS_ALIGNED(contentIds)) {
+    if (!OSIsAligned32B(tmd) || !OSIsAligned32B(contentIds)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -698,7 +696,7 @@ ESError ESP_ListTmdContentsOnCard(ESTitleMeta* tmd, u32 tmdSize, ESContentId* co
         vec[1].base = (u8*)pNumContents;
         vec[1].length = sizeof(*pNumContents);
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_LIST_TMD_CONTENTS_ON_CARD, 1, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_LIST_TMD_CONTENTS_ON_CARD, 1, 1, vec);
         if (err == IOS_ERROR_OK) {
             *numContents = *pNumContents;
         }
@@ -716,7 +714,7 @@ ESError ESP_ListTmdContentsOnCard(ESTitleMeta* tmd, u32 tmdSize, ESContentId* co
         vec[2].base = (u8*)contentIds;
         vec[2].length = *numContents * sizeof(*contentIds);
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_LIST_TMD_CONTENTS_ON_CARD_WITH_COUNT, 2, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_LIST_TMD_CONTENTS_ON_CARD_WITH_COUNT, 2, 1, vec);
         goto exit;
     }
 
@@ -739,7 +737,7 @@ ESError ESP_GetTicketViews(ESTitleId titleId, ESTicketView* ticketViews, u32* nu
         goto exit;
     }
 
-    if (!IS_ALIGNED(ticketViews)) {
+    if (!OSIsAligned32B(ticketViews)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -752,7 +750,7 @@ ESError ESP_GetTicketViews(ESTitleId titleId, ESTicketView* ticketViews, u32* nu
         vec[1].base = (u8*)pNumTicketViews;
         vec[1].length = sizeof(*pNumTicketViews);
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_TICKET_VIEWS, 1, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_TICKET_VIEWS, 1, 1, vec);
         if (err == IOS_ERROR_OK) {
             *numTicketViews = *pNumTicketViews;
         }
@@ -770,7 +768,7 @@ ESError ESP_GetTicketViews(ESTitleId titleId, ESTicketView* ticketViews, u32* nu
         vec[2].base = (u8*)ticketViews;
         vec[2].length = *numTicketViews * sizeof(*ticketViews);
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_TICKET_VIEWS_WITH_COUNT, 2, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_TICKET_VIEWS_WITH_COUNT, 2, 1, vec);
         goto exit;
     }
 
@@ -790,7 +788,7 @@ ESError ESP_DiGetTicketView(void* ticket, ESTicketView* ticketView) {
         goto exit;
     }
 
-    if (!IS_ALIGNED(ticket) || !IS_ALIGNED(ticketView)) {
+    if (!OSIsAligned32B(ticket) || !OSIsAligned32B(ticketView)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -805,7 +803,7 @@ ESError ESP_DiGetTicketView(void* ticket, ESTicketView* ticketView) {
     vec[1].base = (u8*)ticketView;
     vec[1].length = sizeof(*ticketView);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_DVD_TICKET_VIEW, 1, 1, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_DVD_TICKET_VIEW, 1, 1, vec);
 
 exit:
     return err;
@@ -825,7 +823,7 @@ ESError ESP_DiGetTmd(ESTitleMeta* tmd, u32* tmdSize) {
         goto exit;
     }
 
-    if (!IS_ALIGNED(tmd)) {
+    if (!OSIsAligned32B(tmd)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -834,7 +832,7 @@ ESError ESP_DiGetTmd(ESTitleMeta* tmd, u32* tmdSize) {
         vec[0].base = (u8*)pTmdSize;
         vec[0].length = sizeof(*pTmdSize);
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_DVD_TMD, 0, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_DVD_TMD, 0, 1, vec);
         if (err == IOS_ERROR_OK) {
             *tmdSize = *pTmdSize;
         }
@@ -850,7 +848,7 @@ ESError ESP_DiGetTmd(ESTitleMeta* tmd, u32* tmdSize) {
         vec[1].base = (u8*)tmd;
         vec[1].length = *tmdSize;
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_DVD_TMD_WITH_SIZE, 1, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_DVD_TMD_WITH_SIZE, 1, 1, vec);
         goto exit;
     }
 
@@ -873,7 +871,7 @@ ESError ESP_GetTmd(ESTitleId titleId, ESTitleMeta* tmd, u32* tmdSize) {
         goto exit;
     }
 
-    if (!IS_ALIGNED(tmd)) {
+    if (!OSIsAligned32B(tmd)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -886,7 +884,7 @@ ESError ESP_GetTmd(ESTitleId titleId, ESTitleMeta* tmd, u32* tmdSize) {
         vec[1].base = (u8*)pTmdSize;
         vec[1].length = sizeof(*pTmdSize);
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_TMD, 1, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_TMD, 1, 1, vec);
         if (err == IOS_ERROR_OK) {
             *tmdSize = *pTmdSize;
         }
@@ -904,7 +902,7 @@ ESError ESP_GetTmd(ESTitleId titleId, ESTitleMeta* tmd, u32* tmdSize) {
         vec[2].base = (u8*)tmd;
         vec[2].length = *tmdSize;
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_TMD_WITH_SIZE, 2, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_TMD_WITH_SIZE, 2, 1, vec);
         goto exit;
     }
 
@@ -941,7 +939,7 @@ ESError ESP_GetTmdView(ESTitleId titleId, ESTmdView* tmdView, u32* tmdSize) {
         goto exit;
     }
 
-    if (!IS_ALIGNED(tmdView)) {
+    if (!OSIsAligned32B(tmdView)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -954,7 +952,7 @@ ESError ESP_GetTmdView(ESTitleId titleId, ESTmdView* tmdView, u32* tmdSize) {
         vec[1].base = (u8*)pTmdSize;
         vec[1].length = sizeof(*pTmdSize);
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_TMDVIEW, 1, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_TMDVIEW, 1, 1, vec);
         if (err == IOS_ERROR_OK) {
             *tmdSize = *pTmdSize;
         }
@@ -974,7 +972,7 @@ ESError ESP_GetTmdView(ESTitleId titleId, ESTmdView* tmdView, u32* tmdSize) {
         vec[2].base = (u8*)tmdView;
         vec[2].length = *tmdSize;
 
-        err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_TMDVIEW_WITH_SIZE, 2, 1, vec);
+        err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_TMDVIEW_WITH_SIZE, 2, 1, vec);
         goto exit;
     }
 
@@ -996,7 +994,7 @@ ESError ESP_GetDataDir(ESTitleId titleId, char* dataDir) {
         goto exit;
     }
 
-    if (!IS_ALIGNED(dataDir)) {
+    if (!OSIsAligned32B(dataDir)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -1008,7 +1006,7 @@ ESError ESP_GetDataDir(ESTitleId titleId, char* dataDir) {
     vec[1].base = (u8*)dataDir;
     vec[1].length = sizeof(*dataDir) * 30;
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_DATA_DIR, 1, 1, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_DATA_DIR, 1, 1, vec);
 
 exit:
     return err;
@@ -1029,7 +1027,7 @@ ESError ESP_GetTitleId(ESTitleId* titleId) {
     vec[0].base = ES_WORK_AT(0x00);
     vec[0].length = sizeof(ESTitleId);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_TITLE_ID, 0, 1, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_TITLE_ID, 0, 1, vec);
     if (err == IOS_ERROR_OK) {
         *titleId = *(ESTitleId*)ES_WORK_AT(0x00);
     }
@@ -1053,7 +1051,7 @@ ESError ESP_GetDeviceId(ESDeviceId* deviceId) {
     vec[0].base = ES_WORK_AT(0x00);
     vec[0].length = sizeof(ESDeviceId);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_DEVICE_ID, 0, 1, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_DEVICE_ID, 0, 1, vec);
     if (err == IOS_ERROR_OK) {
         *deviceId = *(ESDeviceId*)ES_WORK_AT(0x00);
     }
@@ -1077,7 +1075,7 @@ ESError ESP_GetConsumption(ESTicketId ticketId, ESLpEntry* limitEntries, u32* nu
         goto exit;
     }
 
-    if (!IS_ALIGNED(limitEntries)) {
+    if (!OSIsAligned32B(limitEntries)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -1098,7 +1096,7 @@ ESError ESP_GetConsumption(ESTicketId ticketId, ESLpEntry* limitEntries, u32* nu
     vec[2].base = (u8*)pNumEntries;
     vec[2].length = sizeof(*pNumEntries);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_CONSUMPTION, 1, 2, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_CONSUMPTION, 1, 2, vec);
     *numEntries = *pNumEntries;
 
 exit:
@@ -1117,7 +1115,7 @@ ESError ESP_GetDeviceCert(IOSCSigRsa2048* deviceCert) {
         goto exit;
     }
 
-    if (!IS_ALIGNED64(deviceCert)) {
+    if (!IS_ALIGNED(deviceCert, 64)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -1125,7 +1123,7 @@ ESError ESP_GetDeviceCert(IOSCSigRsa2048* deviceCert) {
     vec[0].base = (u8*)deviceCert;
     vec[0].length = sizeof(IOSCSigRsa2048);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_DEVICE_CERT, 0, 1, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_DEVICE_CERT, 0, 1, vec);
 
 exit:
     return err;
@@ -1165,7 +1163,7 @@ ESError ESP_Encrypt(u32 keyNum, u8* iv, u8* input, u32 size, u8* output) {
     vec[4].base = (u8*)output;
     vec[4].length = size;
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_ENCRYPT, 3, 2, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_ENCRYPT, 3, 2, vec);
 
 exit:
     return err;
@@ -1205,7 +1203,7 @@ ESError ESP_Decrypt(u32 keyNum, u8* iv, u8* input, u32 size, u8* output) {
     vec[4].base = (u8*)output;
     vec[4].length = size;
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_DECRYPT, 3, 2, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_DECRYPT, 3, 2, vec);
 
 exit:
     return err;
@@ -1223,7 +1221,7 @@ ESError ESP_Sign(void* data, u32 dataSize, IOSCSigDummy sig, IOSCSigRsa2048* sig
         goto exit;
     }
 
-    if (!IS_ALIGNED(data) || !IS_ALIGNED(sig) || !IS_ALIGNED(sigSize)) {
+    if (!OSIsAligned32B(data) || !OSIsAligned32B(sig) || !OSIsAligned32B(sigSize)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -1235,7 +1233,7 @@ ESError ESP_Sign(void* data, u32 dataSize, IOSCSigDummy sig, IOSCSigRsa2048* sig
     vec[2].base = (u8*)sigSize;
     vec[2].length = sizeof(*sigSize);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_SIGN, 1, 2, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_SIGN, 1, 2, vec);
 
 exit:
     return err;
@@ -1253,7 +1251,7 @@ ESError ESP_VerifySign(void* data, u32 dataSize, IOSCSigDummy sig, void* certs, 
         goto exit;
     }
 
-    if (!IS_ALIGNED64(data) || !IS_ALIGNED(sig) || !IS_ALIGNED(certs)) {
+    if (!IS_ALIGNED(data, 64) || !OSIsAligned32B(sig) || !OSIsAligned32B(certs)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -1267,7 +1265,7 @@ ESError ESP_VerifySign(void* data, u32 dataSize, IOSCSigDummy sig, void* certs, 
     vec[2].base = (u8*)certs;
     vec[2].length = nCerts;
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_VERIFY_SIGN, 3, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_VERIFY_SIGN, 3, 0, vec);
 
 exit:
     return err;
@@ -1292,7 +1290,7 @@ ESError ESP_DeleteTitleContent(ESTitleId titleId) {
     vec[0].base = (u8*)pTitleId;
     vec[0].length = sizeof(*pTitleId);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_DELETE_TITLE_CONTENT, 1, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_DELETE_TITLE_CONTENT, 1, 0, vec);
 
 exit:
     return err;
@@ -1321,7 +1319,7 @@ ESError ESP_DeleteContent(ESTitleId titleId, ESContentId contentId) {
     vec[1].base = (u8*)pContentId;
     vec[1].length = sizeof(*pContentId);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_DELETE_CONTENT, 2, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_DELETE_CONTENT, 2, 0, vec);
 
 exit:
     return err;
@@ -1337,7 +1335,7 @@ ESError ESP_ExportTitleInit(ESTitleId titleId, ESDeviceId deviceId, ESTicketId t
 
     ESTitleId* pTitleId = (ESTitleId*)ES_WORK_AT(0x00);
 
-    if (!IS_ALIGNED(tmd) || !IS_ALIGNED(ticket) || !IS_ALIGNED(certs) || !IS_ALIGNED(crls)) {
+    if (!OSIsAligned32B(tmd) || !OSIsAligned32B(ticket) || !OSIsAligned32B(certs) || !OSIsAligned32B(crls)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -1361,7 +1359,7 @@ ESError ESP_ExportTitleInit(ESTitleId titleId, ESDeviceId deviceId, ESTicketId t
             vec[1].base = (u8*)tmd;
             vec[1].length = tmdSize;
 
-            err = IOS_Ioctlv(__esFd, ES_IOCTLV_EXPORT_TITLE_INIT, 1, 1, vec);
+            err = IOS_Ioctlv(__esFd, ES_IOCTL_EXPORT_TITLE_INIT, 1, 1, vec);
             goto exit;
         }
         default: {
@@ -1397,7 +1395,7 @@ ESError ESP_ExportContentBegin(ESTitleId titleId, ESContentId contentId) {
     vec[1].base = (u8*)pContentId;
     vec[1].length = sizeof(*pContentId);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_EXPORT_CONTENT_BEGIN, 2, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_EXPORT_CONTENT_BEGIN, 2, 0, vec);
 
 exit:
     return err;
@@ -1417,7 +1415,7 @@ ESError ESP_ExportContentData(ESFd fd, void* data, u32 dataSize) {
         goto exit;
     }
 
-    if (!IS_ALIGNED(data)) {
+    if (!OSIsAligned32B(data)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -1434,7 +1432,7 @@ ESError ESP_ExportContentData(ESFd fd, void* data, u32 dataSize) {
     vec[1].base = (u8*)data;
     vec[1].length = dataSize;
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_EXPORT_CONTENT_DATA, 1, 1, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_EXPORT_CONTENT_DATA, 1, 1, vec);
 
 exit:
     return err;
@@ -1459,7 +1457,7 @@ ESError ESP_ExportContentEnd(ESFd fd) {
     vec[0].base = (u8*)pFd;
     vec[0].length = sizeof(*pFd);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_EXPORT_CONTENT_END, 1, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_EXPORT_CONTENT_END, 1, 0, vec);
 
 exit:
     return err;
@@ -1477,7 +1475,7 @@ ESError ESP_ExportTitleDone() {
         goto exit;
     }
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_EXPORT_TITLE_DONE, 0, 0, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_EXPORT_TITLE_DONE, 0, 0, vec);
 
 exit:
     return err;
@@ -1495,7 +1493,7 @@ ESError ESP_GetTicket(ESTicketView* ticketView, ESTicket* ticket) {
         goto exit;
     }
 
-    if (!IS_ALIGNED(ticketView) || !IS_ALIGNED(ticket)) {
+    if (!OSIsAligned32B(ticketView) || !OSIsAligned32B(ticket)) {
         err = ES_ERR_INVALID;
         goto exit;
     }
@@ -1505,7 +1503,7 @@ ESError ESP_GetTicket(ESTicketView* ticketView, ESTicket* ticket) {
     vec[1].base = (u8*)ticket;
     vec[1].length = sizeof(*ticket);
 
-    err = IOS_Ioctlv(__esFd, ES_IOCTLV_GET_TICKET, 1, 1, vec);
+    err = IOS_Ioctlv(__esFd, ES_IOCTL_GET_TICKET, 1, 1, vec);
 
 exit:
     return err;

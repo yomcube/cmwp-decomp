@@ -11,14 +11,13 @@ enum {
 };
 typedef s32 HIO2Handle;
 
-enum {
+typedef enum HIO2DeviceType {
     HIO2_DEVICE_INVALID = -1,
-    HIO2_DEVICE_0,
-    HIO2_DEVICE_1,
-    HIO2_DEVICE_2,
-    HIO2_DEVICE_MAX
-};
-typedef s32 HIO2DeviceType;
+
+    HIO2_DEVICE_EXI2USB_0,
+    HIO2_DEVICE_EXI2USB_1,
+    HIO2_DEVICE_MrEXI
+} HIO2DeviceType;
 
 enum {
     HIO2_ERR_OK = 0,
