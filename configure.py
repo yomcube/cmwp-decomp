@@ -1021,7 +1021,7 @@ config.libs = [
     ]),
 
     RVLSDKLib("euart", [
-        Object(NonMatching, "RVL_SDK/euart/euart.c")
+        Object(Matching,    "RVL_SDK/euart/euart.c")
     ]),
 
     RVLSDKLib("exi", [

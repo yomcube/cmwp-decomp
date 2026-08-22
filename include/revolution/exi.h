@@ -3,11 +3,15 @@
 
 #include <revolution/types.h>
 
+#include <revolution/euart.h>
+
 #include <revolution/os/OSContext.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+extern const u32 __EXIFreq;
 
 #define EXI_CHAN_0 0
 #define EXI_CHAN_1 1
@@ -61,6 +65,10 @@ extern "C" {
 
 #define EXI_READ 0
 #define EXI_WRITE 1
+
+#define EXI_DEV_EXT 0
+#define EXI_DEV_INT 1
+#define EXI_DEV_NET 2
 
 #define EXI_FREQ_1M 0
 #define EXI_FREQ_2M 1

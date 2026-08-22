@@ -19,7 +19,7 @@ static u32 __EXISwap32(u32 val);
 
 s32 EXIReadReg(s32 chan, u32 dev, u32 cmd, u8* buf, s32 len) {
     u32 val;
-    BOOL err = 0;
+    BOOL err = FALSE;
 
     err |= !EXILock(chan, dev, NULL);
     if (err) {

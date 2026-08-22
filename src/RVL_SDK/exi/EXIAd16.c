@@ -11,11 +11,11 @@ BOOL AD16Init() {
         return TRUE;
     }
 
-    if (!EXILock(EXI_CHAN_2, 0, NULL)) {
+    if (!EXILock(EXI_CHAN_2, EXI_DEV_EXT, NULL)) {
         return FALSE;
     }
 
-    if (!EXISelect(EXI_CHAN_2, 0, EXI_FREQ_1M)) {
+    if (!EXISelect(EXI_CHAN_2, EXI_DEV_EXT, EXI_FREQ_1M)) {
         EXIUnlock(EXI_CHAN_2);
         return FALSE;
     }
@@ -41,11 +41,11 @@ BOOL AD16WriteReg(u32 word) {
     BOOL err;
     u32 cmd;
 
-    if (!Initialized || !EXILock(EXI_CHAN_2, 0, NULL)) {
+    if (!Initialized || !EXILock(EXI_CHAN_2, EXI_DEV_EXT, NULL)) {
         return FALSE;
     }
 
-    if (!EXISelect(EXI_CHAN_2, 0, EXI_FREQ_8M)) {
+    if (!EXISelect(EXI_CHAN_2, EXI_DEV_EXT, EXI_FREQ_8M)) {
         EXIUnlock(EXI_CHAN_2);
         return FALSE;
     }
@@ -67,11 +67,11 @@ BOOL AD16ReadReg(u32* word) {
     BOOL err;
     u32 cmd;
 
-    if (!Initialized || !EXILock(EXI_CHAN_2, 0, NULL)) {
+    if (!Initialized || !EXILock(EXI_CHAN_2, EXI_DEV_EXT, NULL)) {
         return FALSE;
     }
 
-    if (!EXISelect(EXI_CHAN_2, 0, EXI_FREQ_8M)) {
+    if (!EXISelect(EXI_CHAN_2, EXI_DEV_EXT, EXI_FREQ_8M)) {
         EXIUnlock(EXI_CHAN_2);
         return FALSE;
     }

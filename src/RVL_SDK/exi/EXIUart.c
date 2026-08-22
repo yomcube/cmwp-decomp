@@ -9,7 +9,7 @@ static BOOL ProbeBarnacle(s32 chan, u32 dev, u32* revision) {
     int err;
     u32 cmd;
 
-    if (chan != EXI_CHAN_2 && dev == 0 && !EXIAttach(chan, NULL)) {
+    if (chan != EXI_CHAN_2 && dev == EXI_DEV_EXT && !EXIAttach(chan, NULL)) {
         return FALSE;
     }
 
@@ -29,7 +29,7 @@ static BOOL ProbeBarnacle(s32 chan, u32 dev, u32* revision) {
         EXIUnlock(chan);
     }
 
-    if (chan != EXI_CHAN_2 && dev == 0) {
+    if (chan != EXI_CHAN_2 && dev == EXI_DEV_EXT) {
         EXIDetach(chan);
     }
 

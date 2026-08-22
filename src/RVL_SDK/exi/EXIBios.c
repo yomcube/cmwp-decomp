@@ -1,3 +1,16 @@
+
+#include <revolution/verdefs.h>
+
+#if defined(SDK_20091112)
+#ifdef DEBUG
+SDKDefineVersion(EXI, "Dec 11 2009", "15:51:28");
+#else
+SDKDefineVersion(EXI, "Dec 11 2009", "15:55:59");
+#endif
+#elif defined(SDK_20090224)
+SDKDefineVersion(EXI, "Jul 30 2008", "19:19:33");
+#endif
+
 #include <revolution/exi.h>
 
 #include <private/os.h>
@@ -5,11 +18,7 @@
 
 #include <string.h>
 
-#include <revolution/verdefs.h>
-
 #include <private/hollywood.h>
-
-#pragma sym on
 
 int __gUnknown800030C0[2] AT_ADDRESS(OS_BASE_CACHED | 0x30C0);
 
@@ -51,16 +60,6 @@ typedef struct EXIControl {
 #define MAX_FREQ 6
 
 #define EXI_0LENGTH_EXILENGTH_MASK 0xFFFFFFE0
-
-#if defined(SDK_20091112)
-#ifdef DEBUG
-SDKDefineVersion(EXI, "Dec 11 2009", "15:51:28");
-#else
-SDKDefineVersion(EXI, "Dec 11 2009", "15:55:59");
-#endif
-#elif defined(SDK_20090224)
-SDKDefineVersion(EXI, "Jul 30 2008", "19:19:33");
-#endif
 
 static EXIControl Ecb[MAX_CHAN];
 static u32 IDSerialPort1;
@@ -180,7 +179,7 @@ BOOL EXIImmEx(s32 chan, void* buf, s32 len, u32 mode) {
         if (!EXISync(chan)) {
             return FALSE;
         }
-        ((u8*)buf) += xLen;
+        ((char*)buf) += xLen;
         len -= xLen;
     }
 
@@ -359,7 +358,7 @@ BOOL EXIProbe(s32 chan) {
 
     rc = __EXIProbe(chan);
     if (rc && !exi->idTime) {
-        rc = EXIGetID(chan, 0, &id) ? TRUE : FALSE;
+        rc = EXIGetID(chan, EXI_DEV_EXT, &id) ? TRUE : FALSE;
     }
 
     return rc;
@@ -459,7 +458,7 @@ BOOL EXISelectSD(s32 chan, u32 dev, u32 freq) {
     ASSERTLINE(941, !(exi->state & STATE_SELECTED));
 
     enabled = OSDisableInterrupts();
-    if ((exi->state & STATE_SELECTED) || (chan != EXI_CHAN_2 && ((dev == 0 && !(exi->state & STATE_ATTACHED) && !EXIProbe(chan)) ||
+    if ((exi->state & STATE_SELECTED) || (chan != EXI_CHAN_2 && ((dev == EXI_DEV_EXT && !(exi->state & STATE_ATTACHED) && !EXIProbe(chan)) ||
                                                                  !(exi->state & STATE_LOCKED) || exi->dev != dev))) {
         OSRestoreInterrupts(enabled);
         return FALSE;
@@ -502,7 +501,7 @@ BOOL EXISelect(s32 chan, u32 dev, u32 freq) {
     ASSERTLINE(999, !(exi->state & STATE_SELECTED));
 
     enabled = OSDisableInterrupts();
-    if ((exi->state & STATE_SELECTED) || (chan != EXI_CHAN_2 && ((dev == 0 && !(exi->state & STATE_ATTACHED) && !__EXIProbe(chan)) ||
+    if ((exi->state & STATE_SELECTED) || (chan != EXI_CHAN_2 && ((dev == EXI_DEV_EXT && !(exi->state & STATE_ATTACHED) && !__EXIProbe(chan)) ||
                                                                  !(exi->state & STATE_LOCKED) || exi->dev != dev))) {
         OSRestoreInterrupts(enabled);
         return FALSE;
@@ -699,10 +698,10 @@ void EXIInit() {
 
     if (__OSInIPL) {
         EXIProbeReset();
-    } else if (EXIGetID(EXI_CHAN_0, 0, &id) && id == 0x7010000) {
-        __OSEnableBarnacle(EXI_CHAN_1, 0);
-    } else if (EXIGetID(EXI_CHAN_1, 0, &id) && id == 0x7010000) {
-        __OSEnableBarnacle(EXI_CHAN_0, 2);
+    } else if (EXIGetID(EXI_CHAN_0, EXI_DEV_EXT, &id) && id == 0x7010000) {
+        __OSEnableBarnacle(EXI_CHAN_1, EXI_DEV_EXT);
+    } else if (EXIGetID(EXI_CHAN_1, EXI_DEV_EXT, &id) && id == 0x7010000) {
+        __OSEnableBarnacle(EXI_CHAN_0, EXI_DEV_NET);
     }
 
     OSRegisterVersion(__EXIVersion);
@@ -792,12 +791,12 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
     BOOL enabled;
 
     ASSERTLINE(1459, 0 <= chan && chan < MAX_CHAN);
-    if (chan == 0 && dev == 2 && IDSerialPort1) {
+    if (chan == 0 && dev == EXI_DEV_NET && IDSerialPort1) {
         *id = IDSerialPort1;
         return 1;
     }
 
-    if (chan < EXI_CHAN_2 && dev == 0) {
+    if (chan < EXI_CHAN_2 && dev == EXI_DEV_EXT) {
         if (!__EXIProbe(chan)) {
             return 0;
         }
@@ -816,7 +815,7 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
 
     enabled = OSDisableInterrupts();
 
-    err = !EXILock(chan, dev, (chan < 2 && dev == 0) ? &UnlockedHandler : 0);
+    err = !EXILock(chan, dev, (chan < EXI_CHAN_2 && dev == EXI_DEV_EXT) ? &UnlockedHandler : 0);
     if (!err) {
         err = !EXISelect(chan, dev, 0);
         if (!err) {
@@ -833,7 +832,7 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
 
     OSRestoreInterrupts(enabled);
 
-    if (chan < EXI_CHAN_2 && dev == 0) {
+    if (chan < EXI_CHAN_2 && dev == EXI_DEV_EXT) {
         EXIDetach(chan);
         enabled = OSDisableInterrupts();
         err |= __gUnknown800030C0[chan] != startTime;
