@@ -6,8 +6,6 @@
 
 #include <string.h>
 
-#pragma sym on
-
 #define FS_DELETE(x)                                                                                                                                 \
     if (x) {                                                                                                                                         \
         iosFree(hId, (x));                                                                                                                           \

@@ -260,6 +260,10 @@ cflags_base_exceptions = [
     "-cpp_exceptions on",
 ]
 
+# EXIBios.c flags
+
+cflags_exibios = [ *cflags_base, "-schedule off"]
+
 # Slam flags
 if config.version.startswith("2010"):
     cflags_slam = [
@@ -1021,10 +1025,10 @@ config.libs = [
     ]),
 
     RVLSDKLib("exi", [
-        Object(NonMatching, "RVL_SDK/exi/EXIBios.c"),
-        Object(NonMatching, "RVL_SDK/exi/EXIUart.c"),
-        Object(NonMatching, "RVL_SDK/exi/EXIAd16.c"),
-        Object(NonMatching, "RVL_SDK/exi/EXICommon.c")
+        Object(Matching, "RVL_SDK/exi/EXIBios.c", cflags=cflags_exibios),
+        Object(Matching, "RVL_SDK/exi/EXIUart.c"),
+        Object(Matching, "RVL_SDK/exi/EXIAd16.c"),
+        Object(Matching, "RVL_SDK/exi/EXICommon.c")
     ]),
 
     RVLSDKLib("fs", [

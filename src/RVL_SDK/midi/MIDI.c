@@ -1,4 +1,5 @@
 #include <revolution/verdefs.h>
+
 #if defined(SDK_20091112)
 #ifdef DEBUG
 SDKDefineVersion(MIDI, "Dec 11 2009", "15:53:52");

@@ -36,6 +36,8 @@ u32 __OSSimulatedMem2Size AT_ADDRESS(OS_BASE_CACHED | OS_ADDR_SIMULATED_MEM2_SIZ
 
 u32 __OSPartitionType AT_ADDRESS(OS_BASE_CACHED | OS_ADDR_BOOT_PART_TYPE);
 
+volatile u16 __OSDeviceCode AT_ADDRESS(OS_BASE_CACHED | 0x30E6);
+
 /* OS.c */
 
 extern BOOL __OSInIPL;
@@ -51,6 +53,8 @@ void __OSFPRInit();
 
 extern u32 __OSFpscrEnableBits;
 extern OSErrorHandler __OSErrorTable[__OS_EXCEPTION_MAX];
+
+extern u32 __OSGetDIConfig();
 
 #ifdef __cplusplus
 }
