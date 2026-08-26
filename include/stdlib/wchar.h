@@ -28,6 +28,7 @@ wchar_t* wcsncat(wchar_t* dest, const wchar_t* src, size_t num);
 int wcsncmp(const wchar_t* s1, const wchar_t* s2, size_t num);
 wchar_t* wcschr(wchar_t* ws, wchar_t wc);
 wchar_t* wcsstr(const wchar_t* s1, const wchar_t* s2);
+int wcscmp(const wchar_t* s1, const wchar_t* s2);
 
 int swprintf(wchar_t* ws, size_t len, const wchar_t* format, ...);
 int vswprintf(wchar_t* ws, size_t len, const wchar_t* format, va_list arg);

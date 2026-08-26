@@ -21,7 +21,6 @@
 #define IOS_ERROR_ECC -11      /* ECC error*/
 #define IOS_ERROR_ECC_CRIT -12 /* Critical ECC error*/
 #define IOS_ERROR_BADBLOCK -13 /* Bad NAND block*/
-
 #define IOS_ERROR_INVALID_OBJTYPE -14
 #define IOS_ERROR_INVALID_RNG -15
 #define IOS_ERROR_INVALID_FLAG -16
@@ -32,7 +31,6 @@
 #define IOS_ERROR_FAIL_INTERNAL -21
 #define IOS_ERROR_FAIL_ALLOC -22
 #define IOS_ERROR_INVALID_SIZE -23
-#define IOS_ERROR_HW_RESET -24
 
 #define IOS_SEEK_SET 0
 #define IOS_SEEK_CURRENT 1

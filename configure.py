@@ -215,7 +215,7 @@ cflags_base_all = [
 ]
 
 if config.version.startswith("20100817"):
-    cflags_base_all.append("-DSDK_20091112")
+    cflags_base_all.append("-DSDK_20091211")
     cflags_base_all.append("-DSDK_VERSION=20091211")
     cflags_base_all.append("-DHBM_20100224")
     cflags_base_all.append("-DHBM_VERSION=20100224")
@@ -1130,13 +1130,13 @@ config.libs = [
     ]),
 
     RVLSDKLib("nand", [
-        Object(NonMatching, "RVL_SDK/nand/nand.c"),
-        Object(NonMatching, "RVL_SDK/nand/NANDOpenClose.c"),
-        Object(NonMatching, "RVL_SDK/nand/NANDCore.c"),
-        Object(NonMatching, "RVL_SDK/nand/NANDSecret.c"),
-        Object(NonMatching, "RVL_SDK/nand/NANDCheck.c"),
-        Object(NonMatching, "RVL_SDK/nand/NANDLogging.c"),
-        Object(NonMatching, "RVL_SDK/nand/NANDErrorMessage.c")
+        Object(MatchingRel, "RVL_SDK/nand/nand.c"),
+        Object(Matching,    "RVL_SDK/nand/NANDOpenClose.c"),
+        Object(Matching,    "RVL_SDK/nand/NANDCore.c"),
+        Object(Matching,    "RVL_SDK/nand/NANDSecret.c"),
+        Object(Matching,    "RVL_SDK/nand/NANDCheck.c"),
+        Object(Matching,    "RVL_SDK/nand/NANDLogging.c"),
+        Object(Matching,    "RVL_SDK/nand/NANDErrorMessage.c")
     ]),
 
     RVLSDKLib("os", [

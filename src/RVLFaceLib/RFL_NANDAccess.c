@@ -1066,7 +1066,7 @@ RFLErrcode RFLiDeleteAsync(RFLiFileType type, RFLSimpleCB cb) {
     return RFLGetAsyncStatus();
 }
 
-static void createDirCommon_(const char* dir, NANDCallback cb, const char* unused /*not in dwarf*/) {
+static void createDirCommon_(const char* dir, NANDAsyncCallback cb, const char* unused /*not in dwarf*/) {
     NANDCommandBlock* block = RFLiSetCommandBlock(RFLiFileType_Database, RFLiAsyncTag_CreateDirAsync);
     s32 create = NANDPrivateCreateDirAsync(dir, NAND_PERM_ALL_RW, 0, cb, block);
 

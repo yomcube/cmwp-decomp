@@ -1,7 +1,7 @@
 #ifndef REVOLUTION_ESP_H
 #define REVOLUTION_ESP_H
 
-#include <revolution/es/estypes.h>
+#include <revolution/es/esitypes.h>
 
 /**
  * https://wiibrew.org/wiki//dev/es

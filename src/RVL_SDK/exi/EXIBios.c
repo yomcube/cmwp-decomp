@@ -1,7 +1,7 @@
 
 #include <revolution/verdefs.h>
 
-#if defined(SDK_20091112)
+#if defined(SDK_20091211)
 #ifdef DEBUG
 SDKDefineVersion(EXI, "Dec 11 2009", "15:51:28");
 #else
