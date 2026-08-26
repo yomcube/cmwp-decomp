@@ -18,8 +18,23 @@ extern "C" {
 #define OS_PROTECT_CONTROL_RDWR (OS_PROTECT_CONTROL_READ | OS_PROTECT_CONTROL_WRITE)
 
 void OSProtectRange(u32 chan, void* addr, u32 nBytes, u32 control);
-u32 OSGetPhysicalMemSize();
-u32 OSGetConsoleSimulatedMemSize();
+
+u32 OSGetPhysicalMem1Size();
+u32 OSGetPhysicalMem2Size();
+#define OSGetPhysicalMemSize OSGetPhysicalMem1Size
+
+u32 OSGetConsoleSimulatedMem1Size();
+u32 OSGetConsoleSimulatedMem2Size();
+#define OSGetConsoleSimulatedMemSize OSGetConsoleSimulatedMem1Size
+
+void OSDisableCodeExecOnMEM1Hi8MB();
+void OSDisableCodeExecOnMEM1Hi16MB();
+void __OSRestoreCodeExecOnMEM1(s32 arg0);
+
+void OSEnableCodeExecOnMEM2Lo16MB();
+void OSEnableCodeExecOnMEM2Lo8MB();
+
+void __OSInitMemoryProtection();
 
 #ifdef __cplusplus
 }

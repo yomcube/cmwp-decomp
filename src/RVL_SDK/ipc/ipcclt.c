@@ -451,7 +451,7 @@ static void __timeout_cb(OSAlarm* alarm, OSContext* context) {
 /* OPEN */
 /********/
 
-static IOSError __ios_Open(__ios_rpc* rpc, char* path, u32 flags) {
+static IOSError __ios_Open(__ios_rpc* rpc, const char* path, u32 flags) {
     IOSResourceRequest* request;
     IOSError result = IOS_ERROR_OK;
 
@@ -461,15 +461,15 @@ static IOSError __ios_Open(__ios_rpc* rpc, char* path, u32 flags) {
     }
 
     request = &rpc->request;
-    DCFlushRange(path, strnlen(path, IOS_MAX_PATH) + 1);
-    request->args.open.path = (const u8*)OSCachedToPhysical(path);
+    DCFlushRange((void*)path, strnlen(path, IOS_MAX_PATH) + 1);
+    request->args.open.path = (const u8*)OSCachedToPhysical((void*)path);
     request->args.open.flags = flags;
 
 exit:
     return result;
 }
 
-IOSFd IOS_OpenAsync(char* path, u32 flags, IOSCallback callback, void* callbackArg) {
+IOSFd IOS_OpenAsync(const char* path, u32 flags, IOSCallback callback, void* callbackArg) {
     __ios_rpc* rpc;
     IOSError result = IOS_ERROR_OK;
 
@@ -489,7 +489,7 @@ exit:
     return result;
 }
 
-IOSFd IOS_Open(char* path, u32 flags) {
+IOSFd IOS_Open(const char* path, u32 flags) {
     __ios_rpc* rpc;
     IOSError result = IOS_ERROR_OK;
 
@@ -510,7 +510,7 @@ exit:
 }
 
 #if SDK_VERSION >= 20091211
-IOSFd IOS_OpenWithTimeout(char* path, u32 flags) {
+IOSFd IOS_OpenWithTimeout(const char* path, u32 flags) {
     __ios_rpc* rpc;
     IOSError result = IOS_ERROR_OK;
 
@@ -586,7 +586,7 @@ exit:
 /* READ */
 /********/
 
-static IOSError __ios_Read(__ios_rpc* rpc, u8* outPtr, u32 outLen) {
+static IOSError __ios_Read(__ios_rpc* rpc, void* outPtr, u32 outLen) {
     IOSResourceRequest* request;
     s32 result = IOS_ERROR_OK;
 
@@ -604,7 +604,7 @@ exit:
     return result;
 }
 
-IOSError IOS_ReadAsync(IOSFd fd, u8* outPtr, u32 outLen, IOSCallback callback, void* callbackArg) {
+IOSError IOS_ReadAsync(IOSFd fd, void* outPtr, u32 outLen, IOSCallback callback, void* callbackArg) {
     __ios_rpc* rpc;
     IOSError result = IOS_ERROR_OK;
 
@@ -624,7 +624,7 @@ exit:
     return result;
 }
 
-IOSError IOS_Read(IOSFd fd, u8* outPtr, u32 outLen) {
+IOSError IOS_Read(IOSFd fd, void* outPtr, u32 outLen) {
     __ios_rpc* rpc;
     IOSError result = IOS_ERROR_OK;
 
@@ -648,7 +648,7 @@ exit:
 /* WRITE */
 /*********/
 
-static IOSError __ios_Write(__ios_rpc* rpc, u8* inPtr, u32 inLen) {
+static IOSError __ios_Write(__ios_rpc* rpc, void* inPtr, u32 inLen) {
     IOSResourceRequest* request;
     s32 result = IOS_ERROR_OK;
 
@@ -666,7 +666,7 @@ exit:
     return result;
 }
 
-IOSError IOS_WriteAsync(IOSFd fd, u8* inPtr, u32 inLen, IOSCallback callback, void* callbackArg) {
+IOSError IOS_WriteAsync(IOSFd fd, const void* inPtr, u32 inLen, IOSCallback callback, void* callbackArg) {
     __ios_rpc* rpc;
     IOSError result = IOS_ERROR_OK;
 
@@ -675,7 +675,7 @@ IOSError IOS_WriteAsync(IOSFd fd, u8* inPtr, u32 inLen, IOSCallback callback, vo
         goto exit;
     }
 
-    result = __ios_Write(rpc, inPtr, inLen);
+    result = __ios_Write(rpc, (void*)inPtr, inLen);
     if (result != IOS_ERROR_OK) {
         goto exit;
     }
@@ -686,7 +686,7 @@ exit:
     return result;
 }
 
-IOSError IOS_Write(IOSFd fd, u8* inPtr, u32 inLen) {
+IOSError IOS_Write(IOSFd fd, const void* inPtr, u32 inLen) {
     __ios_rpc* rpc;
     IOSError result = IOS_ERROR_OK;
 
@@ -695,7 +695,7 @@ IOSError IOS_Write(IOSFd fd, u8* inPtr, u32 inLen) {
         goto exit;
     }
 
-    result = __ios_Write(rpc, inPtr, inLen);
+    result = __ios_Write(rpc, (void*)inPtr, inLen);
     if (result != IOS_ERROR_OK) {
         goto exit;
     }
@@ -768,7 +768,7 @@ exit:
     return result;
 }
 
-static IOSError __ios_Ioctl(__ios_rpc* rpc, u32 cmd, u8* inPtr, u32 inLen, u8* outPtr, u32 outLen) {
+static IOSError __ios_Ioctl(__ios_rpc* rpc, u32 cmd, void* inPtr, u32 inLen, void* outPtr, u32 outLen) {
     IOSResourceRequest* request;
     s32 result = IOS_ERROR_OK;
 
@@ -792,7 +792,7 @@ exit:
     return result;
 }
 
-IOSError IOS_IoctlAsync(IOSFd fd, u32 cmd, u8* inPtr, u32 inLen, u8* outPtr, u32 outLen, IOSCallback callback, void* callbackArg) {
+IOSError IOS_IoctlAsync(IOSFd fd, u32 cmd, void* inPtr, u32 inLen, void* outPtr, u32 outLen, IOSCallback callback, void* callbackArg) {
     __ios_rpc* rpc;
     IOSError result = IOS_ERROR_OK;
 
@@ -812,7 +812,7 @@ exit:
     return result;
 }
 
-IOSError IOS_Ioctl(IOSFd fd, u32 cmd, u8* inPtr, u32 inLen, u8* outPtr, u32 outLen) {
+IOSError IOS_Ioctl(IOSFd fd, u32 cmd, void* inPtr, u32 inLen, void* outPtr, u32 outLen) {
     __ios_rpc* rpc;
     IOSError result = IOS_ERROR_OK;
 

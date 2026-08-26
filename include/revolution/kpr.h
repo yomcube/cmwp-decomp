@@ -25,7 +25,6 @@ void KPRClearQueue(KPRQueue* queue);
 void KPRSetMode(KPRQueue* queue, int mode);
 int KPRGetMode(KPRQueue* queue);
 
-
 static void KPRProcessDeadKeys();
 static void KPRProcessRomaji();
 static int isConsonant(wchar_t c);

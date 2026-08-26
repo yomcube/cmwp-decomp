@@ -24,6 +24,8 @@ typedef struct OSShutdownFunctionQueue {
     OSShutdownFunctionInfo* tail;  // 0x04
 } OSShutdownFunctionQueue;
 
+#define OS_SHUTDOWN_2 2
+
 void OSRegisterShutdownFunction(OSShutdownFunctionInfo* info);
 void OSUnregisterShutdownFunction(OSShutdownFunctionInfo* info);
 

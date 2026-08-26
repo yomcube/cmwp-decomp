@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-#if defined(SDK_20091112)
+#if defined(SDK_20091211)
 #ifdef DEBUG
 SDKDefineVersion(EUART, "Dec 11 2009", "15:54:32");
 #else

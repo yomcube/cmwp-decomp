@@ -3,7 +3,9 @@
 
 #include <revolution/types.h>
 
+#include <revolution/gx/GXStruct.h>
 #include <revolution/os/OSContext.h>
+
 #include <stdarg.h>
 
 #ifdef __cplusplus
@@ -14,6 +16,8 @@ DECL_WEAK void OSReport(const char* msg, ...);
 DECL_WEAK void OSVReport(const char* msg, va_list list);
 
 DECL_WEAK void OSPanic(const char* file, int line, const char* msg, ...);
+
+void OSFatal(GXColor fg, GXColor bg, const char* msg);
 
 #define OSHaltLine(line, ...) OSPanic(__FILE__, line, __VA_ARGS__)
 #define OSHalt(...) OSHaltLine(__LINE__, __VA_ARGS__)

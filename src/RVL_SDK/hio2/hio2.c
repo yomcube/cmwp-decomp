@@ -172,7 +172,7 @@ HIO2Handle HIO2Open(HIO2DeviceType type, HIOHandleCallback receiveCallback, HIOH
         }
         reg = 0xD8;
         enabled = OSDisableInterrupts();
-        if (!EXIWriteReg(handle, dev, 0xB4000000, (u32*)&reg, 1)) {
+        if (!EXIWriteReg(handle, dev, 0xB4000000, (u8*)&reg, 1)) {
             if (dev == 0) {
                 EXIDetach(handle);
             }
@@ -237,7 +237,7 @@ BOOL HIO2ReadMailbox(HIO2Handle handle, u32* mail) {
         return FALSE;
     } else {
         ASSERTLINE(509, mail != NULL);
-        result = EXIReadReg(handle, __HIO2Control[handle].dev, 0x34000200, mail, 4);
+        result = EXIReadReg(handle, __HIO2Control[handle].dev, 0x34000200, (u8*)mail, 4);
         if (!result) {
             __HIO2LastErrorCode = HIO2_ERR_EXI;
         }
@@ -251,7 +251,7 @@ BOOL HIO2WriteMailbox(HIO2Handle handle, u32 mail) {
     if (IS_BAD_HANDLE(handle)) {
         return FALSE;
     } else {
-        result = EXIWriteReg(handle, __HIO2Control[handle].dev, 0xB4000100, &mail, 4);
+        result = EXIWriteReg(handle, __HIO2Control[handle].dev, 0xB4000100, (u8*)&mail, 4);
         if (!result) {
             __HIO2LastErrorCode = HIO2_ERR_EXI;
         }
@@ -329,7 +329,7 @@ BOOL HIO2ReadStatus(HIO2Handle handle, s32* status) {
     } else {
         u8 reg;
         ASSERTLINE(688, status != NULL);
-        result = EXIReadReg(handle, __HIO2Control[handle].dev, 0x34000000, (u32*)&reg, 1);
+        result = EXIReadReg(handle, __HIO2Control[handle].dev, 0x34000000, (u8*)&reg, 1);
         *status = !(reg & 8) ? 1 : 0;
         *status |= !(reg & 4) ? 0 : 2;
         *status &= 3;
